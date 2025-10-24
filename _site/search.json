@@ -1,0 +1,135 @@
+[
+  {
+    "objectID": "proposal.html",
+    "href": "proposal.html",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "",
+    "text": "The NSL-KDD dataset is an improved successor to KDD Cup 1999, designed to mitigate key issues such as redundant records and extreme class imbalance.It comprises network connection records with 41 features (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating normal or one of several attack types grouped into four categories: DoS, Probe, R2L, and U2R.\n\n\n\nThis analysis uses the 10% of NSL-KDD corrected file with 494021 rows and 43 columns.\n\nIn the context of intrusion detection, the dataset encompasses four main families of \nattack behaviors: Denial of Service (DoS), Probe, Remote to Local (R2L),\nand User to Root (U2R): \n\n- normal: 19.69% (n = 97278)\n- DoS: 79.24% (n = 391458)\n- Probe: 0.83% (n = 4107)\n- R2L: 0.23% (n = 1126)\n- U2R: 0.01% (n = 52)\n\n\n\nWhy this dataset?  It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders)."
+  },
+  {
+    "objectID": "proposal.html#dataset",
+    "href": "proposal.html#dataset",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "",
+    "text": "The NSL-KDD dataset is an improved successor to KDD Cup 1999, designed to mitigate key issues such as redundant records and extreme class imbalance.It comprises network connection records with 41 features (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating normal or one of several attack types grouped into four categories: DoS, Probe, R2L, and U2R.\n\n\n\nThis analysis uses the 10% of NSL-KDD corrected file with 494021 rows and 43 columns.\n\nIn the context of intrusion detection, the dataset encompasses four main families of \nattack behaviors: Denial of Service (DoS), Probe, Remote to Local (R2L),\nand User to Root (U2R): \n\n- normal: 19.69% (n = 97278)\n- DoS: 79.24% (n = 391458)\n- Probe: 0.83% (n = 4107)\n- R2L: 0.23% (n = 1126)\n- U2R: 0.01% (n = 52)\n\n\n\nWhy this dataset?  It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders)."
+  },
+  {
+    "objectID": "proposal.html#questions",
+    "href": "proposal.html#questions",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Questions",
+    "text": "Questions\n\nHow effectively can statistical anomaly detection methods identify malicious network traffic within the NSL-KDD dataset? Or more specifically, which unsupervised techniques — such as Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), and DBSCAN — perform best in distinguishing normal traffic from various attack families (DoS, Probe, R2L, and U2R)? \nHow does the performance of machine learning–based intrusion detection models compare to traditional statistical anomaly detectors? Or more specifically, which algorithms — including Random Forest, Support Vector Machine (SVM), Isolation Forest, and Deep Autoencoders — achieve higher accuracy, precision, and recall when detecting network intrusions, and what trade-offs exist in terms of interpretability and computational cost?"
+  },
+  {
+    "objectID": "proposal.html#analysis-plan",
+    "href": "proposal.html#analysis-plan",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Analysis plan",
+    "text": "Analysis plan\nWeek 1 – Problem Definition & Data Preparation The first week focuses on defining the objectives of anomaly detection within the NSL-KDD dataset. The dataset will be loaded, inspected, and preprocessed to ensure analytical readiness. Tasks include handling missing values, encoding categorical features, and scaling numerical variables. Deliverables: Data preparation notebook and summary report.\nWeek 2 – Exploratory Data Analysis (EDA) This phase aims to understand data distributions, feature correlations, and patterns of normal versus attack traffic. Visualization techniques will be applied to highlight key discriminative features and potential sources of anomaly. Deliverables: EDA notebook with visual insights and descriptive summaries.\nWeek 3 – Statistical Anomaly Detection Methods In this stage, classical statistical methods for anomaly detection will be implemented, including Z-Score, Elliptical Envelope, Local Outlier Factor (LOF), and DBSCAN. Their performance in identifying abnormal network behaviors will be analyzed and compared. Deliverables: Statistical anomaly detection notebook and comparative summary.\nWeek 4 – Machine Learning–Based Methods Modern learning-based detectors will be explored using Isolation Forest, One-Class SVM, and Deep Autoencoders. Models will be tuned for optimal performance, and detection boundaries will be visualized to interpret decision behavior. Deliverables: ML anomaly detection notebook and evaluation metrics.\nWeek 5 – Model Evaluation and Comparison All implemented methods will be assessed using standard performance metrics such as Precision, Recall, F1-score, ROC-AUC, and Detection Rate. Comparative analyses and ablation studies will be performed to evaluate robustness and generalization. Deliverables: Evaluation notebook and performance report.\nWeek 6 – Final Analysis & Reporting The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios. Deliverables: Final project report and presentation slides."
+  },
+  {
+    "objectID": "presentation.html",
+    "href": "presentation.html",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "",
+    "text": "The presentation is created using the Quarto CLI\n## sets the start of a new slide\n\n\n\n\nYou can use plain text\n\n\n\nor bullet points1\n\n\nor in two columns\n\n\n\nlike\nthis\n\n\n\n\n\n\n                            OLS Regression Results                            \n==============================================================================\nDep. Variable:                    mpg   R-squared:                       0.073\nModel:                            OLS   Adj. R-squared:                  0.070\nMethod:                 Least Squares   F-statistic:                     30.59\nDate:                Thu, 23 Oct 2025   Prob (F-statistic):           5.84e-08\nTime:                        09:30:35   Log-Likelihood:                -1346.4\nNo. Observations:                 392   AIC:                             2697.\nDf Residuals:                     390   BIC:                             2705.\nDf Model:                           1                                         \nCovariance Type:            nonrobust                                         \n==============================================================================\n                 coef    std err          t      P&gt;|t|      [0.025      0.975]\n------------------------------------------------------------------------------\nconst         35.8015      2.266     15.800      0.000      31.347      40.257\nspeed       -354.7055     64.129     -5.531      0.000    -480.788    -228.623\n==============================================================================\nOmnibus:                       27.687   Durbin-Watson:                   0.589\nProb(Omnibus):                  0.000   Jarque-Bera (JB):               18.976\nSkew:                           0.420   Prob(JB):                     7.57e-05\nKurtosis:                       2.323   Cond. No.                         169.\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nSome text\ngoes here"
+  },
+  {
+    "objectID": "presentation.html#quarto",
+    "href": "presentation.html#quarto",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Quarto",
+    "text": "Quarto\n\nThe presentation is created using the Quarto CLI\n## sets the start of a new slide"
+  },
+  {
+    "objectID": "presentation.html#layouts",
+    "href": "presentation.html#layouts",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Layouts",
+    "text": "Layouts\nYou can use plain text\n\n\n\nor bullet points1\n\n\nor in two columns\n\n\nlike\nthis\n\nAnd add footnotes"
+  },
+  {
+    "objectID": "presentation.html#code",
+    "href": "presentation.html#code",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Code",
+    "text": "Code\n\n\n                            OLS Regression Results                            \n==============================================================================\nDep. Variable:                    mpg   R-squared:                       0.073\nModel:                            OLS   Adj. R-squared:                  0.070\nMethod:                 Least Squares   F-statistic:                     30.59\nDate:                Thu, 23 Oct 2025   Prob (F-statistic):           5.84e-08\nTime:                        09:30:35   Log-Likelihood:                -1346.4\nNo. Observations:                 392   AIC:                             2697.\nDf Residuals:                     390   BIC:                             2705.\nDf Model:                           1                                         \nCovariance Type:            nonrobust                                         \n==============================================================================\n                 coef    std err          t      P&gt;|t|      [0.025      0.975]\n------------------------------------------------------------------------------\nconst         35.8015      2.266     15.800      0.000      31.347      40.257\nspeed       -354.7055     64.129     -5.531      0.000    -480.788    -228.623\n==============================================================================\nOmnibus:                       27.687   Durbin-Watson:                   0.589\nProb(Omnibus):                  0.000   Jarque-Bera (JB):               18.976\nSkew:                           0.420   Prob(JB):                     7.57e-05\nKurtosis:                       2.323   Cond. No.                         169.\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified."
+  },
+  {
+    "objectID": "presentation.html#plot-and-text",
+    "href": "presentation.html#plot-and-text",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Plot and text",
+    "text": "Plot and text\n\n\n\nSome text\ngoes here"
+  },
+  {
+    "objectID": "presentation.html#tables",
+    "href": "presentation.html#tables",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Tables",
+    "text": "Tables\nIf you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,\n\n\n\n\n\n\n\n\n\n\n\n\nspecies\n\n\n\nisland\n\n\n\nbill_length_mm\n\n\n\nbill_depth_mm\n\n\n\nflipper_length_mm\n\n\n\nbody_mass_g\n\n\n\nsex\n\n\n\n\n\n\n\n\n\n\n\n0\n\n\n\nAdelie\n\n\n\nTorgersen\n\n\n\n39.1\n\n\n\n18.7\n\n\n\n181.0\n\n\n\n3750.0\n\n\n\nMale\n\n\n\n\n\n\n\n1\n\n\n\nAdelie\n\n\n\nTorgersen\n\n\n\n39.5\n\n\n\n17.4\n\n\n\n186.0\n\n\n\n3800.0\n\n\n\nFemale\n\n\n\n\n\n\n\n2\n\n\n\nAdelie\n\n\n\nTorgersen\n\n\n\n40.3\n\n\n\n18.0\n\n\n\n195.0\n\n\n\n3250.0\n\n\n\nFemale\n\n\n\n\n\n\n\n4\n\n\n\nAdelie\n\n\n\nTorgersen\n\n\n\n36.7\n\n\n\n19.3\n\n\n\n193.0\n\n\n\n3450.0\n\n\n\nFemale\n\n\n\n\n\n\n\n5\n\n\n\nAdelie\n\n\n\nTorgersen\n\n\n\n39.3\n\n\n\n20.6\n\n\n\n190.0\n\n\n\n3650.0\n\n\n\nMale"
+  },
+  {
+    "objectID": "presentation.html#images",
+    "href": "presentation.html#images",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Images",
+    "text": "Images\n\nImage credit: Danielle Navarro, Percolate."
+  },
+  {
+    "objectID": "presentation.html#math-expressions",
+    "href": "presentation.html#math-expressions",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Math Expressions",
+    "text": "Math Expressions\nYou can write LaTeX math expressions inside a pair of dollar signs, e.g. $\\alpha+\\beta$ renders \\(\\alpha + \\beta\\). You can use the display style with double dollar signs:\n$$\\bar{X}=\\frac{1}{n}\\sum_{i=1}^nX_i$$\n\\[\n\\bar{X}=\\frac{1}{n}\\sum_{i=1}^nX_i\n\\]\nLimitations:\n\nThe source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting $$ must appear in the very beginning of a line, followed immediately by a non-space character, and the ending $$ must be at the end of a line, led by a non-space character;\nThere should not be spaces after the opening $ or before the closing $."
+  },
+  {
+    "objectID": "presentation.html#feeling-adventurous",
+    "href": "presentation.html#feeling-adventurous",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Feeling adventurous?",
+    "text": "Feeling adventurous?\n\nYou are welcomed to use the default styling of the slides. In fact, that’s what I expect majority of you will do. You will differentiate yourself with the content of your presentation.\nBut some of you might want to play around with slide styling. Some solutions for this can be found at https://quarto.org/docs/presentations/revealjs."
+  },
+  {
+    "objectID": "presentation.html#footnotes",
+    "href": "presentation.html#footnotes",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nAnd add footnotes↩︎"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "This project was developed by Mehran Tajbakhsh For INFO 523 - Data Mining and Discovery at the University of Arizona, taught by Dr. Greg Chism. The team is comprised of the following team members.\n\nMehran Tajbakhsh: Last-year MSDS student with an MS in Computer Science specializing in Cybersecurity.."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "",
+    "text": "The objective of this project is to develop an anomaly detection framework for identifying malicious network activities using the NSL-KDD dataset, a benchmark for evaluating intrusion detection systems (IDS). Anomalies, or data points that diverge from normal network behavior, often signify potential security threats such as intrusions or fraudulent activities.  The project integrates both statistical and machine learning techniques to enhance detection accuracy and robustness. Statistical methods—including z-score analysis, Local Outlier Factor (LOF), and density-based clustering—will be applied to uncover unusual traffic patterns. In parallel, machine learning models such as Isolation Forest, One-Class SVM, and Autoencoders will be trained to detect complex, non-linear anomalies. Through systematic exploratory data analysis, feature engineering, and model evaluation, the study aims to compare and assess the effectiveness of these techniques in accurately identifying abnormal network behavior. The outcome will contribute to improving automated intrusion detection systems and strengthening cybersecurity defenses against evolving network threats."
+  },
+  {
+    "objectID": "index.html#abstract",
+    "href": "index.html#abstract",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "",
+    "text": "The objective of this project is to develop an anomaly detection framework for identifying malicious network activities using the NSL-KDD dataset, a benchmark for evaluating intrusion detection systems (IDS). Anomalies, or data points that diverge from normal network behavior, often signify potential security threats such as intrusions or fraudulent activities.  The project integrates both statistical and machine learning techniques to enhance detection accuracy and robustness. Statistical methods—including z-score analysis, Local Outlier Factor (LOF), and density-based clustering—will be applied to uncover unusual traffic patterns. In parallel, machine learning models such as Isolation Forest, One-Class SVM, and Autoencoders will be trained to detect complex, non-linear anomalies. Through systematic exploratory data analysis, feature engineering, and model evaluation, the study aims to compare and assess the effectiveness of these techniques in accurately identifying abnormal network behavior. The outcome will contribute to improving automated intrusion detection systems and strengthening cybersecurity defenses against evolving network threats."
+  },
+  {
+    "objectID": "presentation.html#plots",
+    "href": "presentation.html#plots",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Plots",
+    "text": "Plots"
+  },
+  {
+    "objectID": "proposal.html#dataset-summary",
+    "href": "proposal.html#dataset-summary",
+    "title": "Anomaly Detection in Network Traffic Using NSL-KDD Dataset",
+    "section": "Dataset Summary",
+    "text": "Dataset Summary\nThe NSL-KDD dataset is an improved successor to KDD Cup 1999, designed to mitigate key issues such as redundant records and extreme class imbalance. It comprises network connection records with 41 features (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating normal or one of several attack types grouped into four categories: DoS, Probe, R2L, and U2R.\n\n\n\nThis analysis uses the 10% of NSL-KDD corrected file with 494021 rows and 43 columns.\n\nFor security analytics, labels are grouped into families:\n\n- normal: 0.00% (n = 0)\n- DoS: 79.24% (n = 391458)\n- Probe: 0.83% (n = 4107)\n- R2L: 0.23% (n = 1126)\n- U2R: 0.01% (n = 52)\n\n\n\nWhy this dataset? It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders)."
+  }
+]

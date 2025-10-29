@@ -53,11 +53,28 @@ penguins = sns.load_dataset('penguins').dropna()
 
 # Using Quarto for presentations
 
-## Quarto
+## Dataset Limitations and Justification
 
--   The presentation is created using the Quarto CLI
+Although the **NSL-KDD dataset** is dated and partly **synthetic**—constructed from simulated network environments rather than real enterprise traffic—it remains one of the most widely used and well-documented benchmarks for intrusion detection research.  
+Its design introduces several **limitations** that will be carefully considered in this study:
 
--   `##` sets the start of a new slide
+- **Temporal relevance:** The dataset reflects network behaviors and attack types common in the late 1990s, before the advent of modern threats such as advanced persistent attacks, encrypted communication channels, and large-scale botnets.  
+- **Synthetic generation:** The data were produced under controlled lab conditions rather than from live network capture, which means background noise, user variability, and realistic packet timing patterns are underrepresented.  
+- **Feature design:** Certain attributes (e.g., `service`, `flag`) may no longer map directly to contemporary protocols or operating systems, reducing direct applicability to modern network telemetry.  
+- **Label completeness:** All attacks are labeled, unlike in real-world network monitoring where labels are often incomplete or delayed.
+
+Despite these constraints, NSL-KDD remains a valuable **controlled testbed** for benchmarking anomaly and intrusion detection algorithms because:
+
+- It provides **clearly defined attack families** (DoS, Probe, R2L, U2R) that facilitate comparative and reproducible experiments.  
+- It allows systematic evaluation of **class imbalance**, **thresholding**, and **interpretability trade-offs** across model types.  
+- It serves as a **pedagogically consistent foundation** for developing methods that can later be generalized to newer datasets such as **CIC-IDS2017**, **UNSW-NB15**, or proprietary enterprise data.
+
+**Mitigation strategies include:**
+
+- Applying **robust preprocessing**, **resampling**, and **dimensional reduction** to reduce dataset biases.  
+- Framing results as **algorithmic performance benchmarks**, not as direct indicators of deployment-ready accuracy.  
+- Reflecting on how each model’s strengths and weaknesses might translate to **modern, encrypted, or real-time network environments**.
+
 
 ## Layouts
 

@@ -144,11 +144,34 @@ Mehran Tajbakhsh
 <h1>Using Quarto for presentations</h1>
 
 </section>
-<section id="quarto" class="slide level2">
-<h2>Quarto</h2>
+<section id="dataset-limitations-and-justification" class="slide level2">
+<h2>Dataset Limitations and Justification</h2>
+<p>Although the <strong>NSL-KDD dataset</strong> is dated and partly <strong>synthetic</strong>—constructed from simulated network environments rather than real enterprise traffic—it remains one of the most widely used and well-documented benchmarks for intrusion detection research.<br>
+Its design introduces several <strong>limitations</strong> that will be carefully considered in this study:</p>
 <ul>
-<li><p>The presentation is created using the Quarto CLI</p></li>
-<li><p><code>##</code> sets the start of a new slide</p></li>
+<li><strong>Temporal relevance:</strong> The dataset reflects network behaviors and attack types common in the late 1990s, before the advent of modern threats such as advanced persistent attacks, encrypted communication channels, and large-scale botnets.<br>
+</li>
+<li><strong>Synthetic generation:</strong> The data were produced under controlled lab conditions rather than from live network capture, which means background noise, user variability, and realistic packet timing patterns are underrepresented.<br>
+</li>
+<li><strong>Feature design:</strong> Certain attributes (e.g., <code>service</code>, <code>flag</code>) may no longer map directly to contemporary protocols or operating systems, reducing direct applicability to modern network telemetry.<br>
+</li>
+<li><strong>Label completeness:</strong> All attacks are labeled, unlike in real-world network monitoring where labels are often incomplete or delayed.</li>
+</ul>
+<p>Despite these constraints, NSL-KDD remains a valuable <strong>controlled testbed</strong> for benchmarking anomaly and intrusion detection algorithms because:</p>
+<ul>
+<li>It provides <strong>clearly defined attack families</strong> (DoS, Probe, R2L, U2R) that facilitate comparative and reproducible experiments.<br>
+</li>
+<li>It allows systematic evaluation of <strong>class imbalance</strong>, <strong>thresholding</strong>, and <strong>interpretability trade-offs</strong> across model types.<br>
+</li>
+<li>It serves as a <strong>pedagogically consistent foundation</strong> for developing methods that can later be generalized to newer datasets such as <strong>CIC-IDS2017</strong>, <strong>UNSW-NB15</strong>, or proprietary enterprise data.</li>
+</ul>
+<p><strong>Mitigation strategies include:</strong></p>
+<ul>
+<li>Applying <strong>robust preprocessing</strong>, <strong>resampling</strong>, and <strong>dimensional reduction</strong> to reduce dataset biases.<br>
+</li>
+<li>Framing results as <strong>algorithmic performance benchmarks</strong>, not as direct indicators of deployment-ready accuracy.<br>
+</li>
+<li>Reflecting on how each model’s strengths and weaknesses might translate to <strong>modern, encrypted, or real-time network environments</strong>.</li>
 </ul>
 </section>
 <section id="layouts" class="slide level2">
@@ -169,15 +192,15 @@ Mehran Tajbakhsh
 <aside><ol class="aside-footnotes"><li id="fn1"><p>And add footnotes</p></li></ol></aside></section>
 <section id="code" class="slide level2">
 <h2>Code</h2>
-<div id="c5241ede" class="cell" data-execution_count="4">
+<div id="a79b4c75" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-stdout">
 <pre><code>                            OLS Regression Results                            
 ==============================================================================
 Dep. Variable:                    mpg   R-squared:                       0.073
 Model:                            OLS   Adj. R-squared:                  0.070
 Method:                 Least Squares   F-statistic:                     30.59
-Date:                Thu, 23 Oct 2025   Prob (F-statistic):           5.84e-08
-Time:                        09:30:35   Log-Likelihood:                -1346.4
+Date:                Wed, 29 Oct 2025   Prob (F-statistic):           5.84e-08
+Time:                        09:16:38   Log-Likelihood:                -1346.4
 No. Observations:                 392   AIC:                             2697.
 Df Residuals:                     390   BIC:                             2705.
 Df Model:                           1                                         
@@ -201,7 +224,7 @@ Notes:
 </section>
 <section id="plots" class="slide level2">
 <h2>Plots</h2>
-<div id="414f4d07" class="cell" data-execution_count="5">
+<div id="29ae0e0c" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -220,7 +243,7 @@ Notes:
 <li><p>goes here</p></li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div id="0f042d69" class="cell" data-fig.width="5.5" data-execution_count="6">
+<div id="e0167610" class="cell" data-fig.width="5.5" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -239,7 +262,7 @@ Notes:
 <section id="tables" class="slide level2">
 <h2>Tables</h2>
 <p>If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,</p>
-<div id="0ec360ef" class="cell" data-execution_count="7">
+<div id="8e921362" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display" data-execution_count="7">
 <table border="1" class="dataframe">
 

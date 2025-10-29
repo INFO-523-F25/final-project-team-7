@@ -5,11 +5,21 @@ author:
   - name: "Team 7 - Mehran Tajbakhsh"
     affiliations:
       - name: "College of Information Science, University of Arizona"
-description: "The goal of this project is to detect anomalies in network traffic data using a combination of statistical and machine learning techniques.<br>
-Anomalies, or outliers, are data points that deviate significantly from normal behavior. In cybersecurity contexts, these anomalies often correspond to intrusions, attacks, or fraudulent activities.<br>
-I will use the NSL-KDD dataset, a well-established benchmark for evaluating intrusion detection systems (IDS). Through a structured process of exploratory data analysis, statistical anomaly detection, and machine learning modeling, this project aims to build a robust anomaly detection framework capable of identifying malicious network activity.<br>
-The actual NSL-KDD dataset is fairly large (nearly 4 million records). I will be using a smaller version of the data that is a 10% subset randomly sampled from the whole data.<br>
-Finally, I will compare performance across these methods and evaluate their ability to correctly flag network intrusions as anomalies.
+description: "  This project investigates the detection of anomalous network behavior using both statistical and machine learning techniques.<br>
+The study leverages the **NSL-KDD dataset**, a refined version of the **KDD Cup 1999** intrusion detection benchmark, to evaluate
+different approaches for distinguishing between normal and malicious network traffic. <br>
+<br>
+The project compares two methodological categories:<br>
+
+- **Unsupervised anomaly detection**, where models learn only from normal traffic and must identify outliers without attack labels.<br>
+- **Supervised intrusion detection**, where labeled attack data are used to train classifiers to recognize known attack patterns.<br>
+<br>
+       
+The actual NSL-KDD dataset is fairly large, containing nearly **4 million connection records**.<br>
+To make the analysis computationally feasible while preserving the dataset’s diversity, this project will use a **randomly selected 10% subset** of the full data. This reduced sample maintains representative proportions of normal and attack classes, ensuring statistical validity while allowing for more efficient experimentation and model tuning. <br>
+<br>
+The project will also address class imbalance through resampling and weighting techniques, apply standardized preprocessing (encoding, scaling, and feature selection), and evaluate each model’s performance using threshold-based anomaly scoring and classification metrics.<br>  
+  The ultimate goal is to develop a **robust, interpretable intrusion detection framework** suitable for **enterprise and IoT network environments**.
 "
 format:
   html:
@@ -103,8 +113,14 @@ for fam in ["normal","DoS","Probe","R2L","U2R"]:
     glue(f"c_{fam}", int(fam_cnt.get(fam, 0)), display=False)
 
 ```
-The **NSL-KDD** dataset is an improved successor to **KDD Cup 1999**, designed to mitigate key issues such as redundant records and extreme class imbalance.<br>It comprises **network connection records** with **41 features** (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating **normal** or one of several **attack types** grouped into four categories: **DoS**, **Probe**, **R2L**, and **U2R**.
-
+The NSL-KDD dataset is an enhanced version of the KDD Cup 1999 intrusion detection benchmark. <bt>
+It removes redundant records and provides a more balanced sample distribution for fair model evaluation. <br>
+Each record represents a network connection with 41 features describing various characteristics such as protocol type, service, traffic flags, and packet statistics.<br>
+The target label identifies whether a connection is normal or belongs to one of four attack families: <br>
+- **DoS (Denial of Service):** Overwhelms system resources (e.g., neptune, smurf, teardrop) <br>
+- **Probe:** Scans for vulnerabilities or open ports (e.g., satan, nmap, ipsweep) <br>
+- **R2L (Remote to Local):** Attempts to gain access remotely (e.g., guess_passwd, imap) <br>
+- **U2R (User to Root):** Escalates privileges locally (e.g., rootkit, buffer_overflow) <br>
 ```{python}
 #| label: Dataset Summary
 #| echo: false
@@ -128,15 +144,123 @@ print(md)
 
 ```
 
-Why this dataset? <br> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).
+**Why this dataset?** <br> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).
+
+## Methodology Overview
+
+This project will implement two complementary detection approaches to compare how well statistical and learning-based methods can detect network intrusions. <br>
+
+| **Approach Type** | **Algorithms** | **Training Data** | **Evaluation Strategy** |
+|--------------------|----------------|-------------------|--------------------------|
+| **Unsupervised Anomaly Detection** | Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), DBSCAN | Trained only on **normal traffic** (no attack labels) | Evaluate anomaly scores using percentile-based thresholding (e.g., top 5% as anomalies); compute precision, recall, and false positive rate against true labels |
+| **Supervised / Semi-Supervised Intrusion Detection** | Random Forest, Support Vector Machine (SVM), Isolation Forest, Deep Autoencoder | Trained on **labeled normal and attack traffic** | Evaluate using stratified 80/20 train-test split with **5-fold cross-validation**; compare Precision, Recall, F1-score, and ROC-AUC |
+
+:::{.center}
+*Table 1. Comparison of Supervised vs. Unsupervised Detection Approaches.*
+:::
+
+## Threshold Definition for Unsupervised Models:
+For models like LOF and DBSCAN, anomaly scores will be transformed into binary outcomes using a threshold determined by the 95th percentile of the score distribution on training data. Models will be compared based on precision, recall, and false positive rate against true attack labels.
+
+## Data Preprocessing and Feature Handling
+
+- **Feature Encoding:** Categorical features (`protocol_type`, `service`, and `flag`) will be transformed using **One-Hot Encoding** to convert them into numerical representations suitable for machine learning models.<br>
+
+- **Scaling:** All numeric features will be standardized using **StandardScaler** to normalize feature magnitudes and support distance-based models such as SVM, LOF, and DBSCAN.<br>
+
+- **Dimensionality Reduction:** **Principal Component Analysis (PCA)** will be applied to reduce feature dimensionality, minimize noise, and visualize decision boundaries in lower dimensions.<br>
+
+- **Latent-Space Visualization:** Beyond PCA, t-SNE and UMAP will be applied to project high-dimensional data into 2D latent spaces. These visualizations will reveal natural clustering between normal and attack traffic, and illustrate how different models separate anomalous connections.<br>
+
+- **Feature Selection:** Correlation filtering and low-variance thresholding will be used to eliminate redundant and non-informative predictors.<br>
+
+- **Train/Test Split:** A **stratified 80/20 split** will ensure consistent class ratios between training and testing datasets, preserving representation of all attack families.<br>
+
+- **Cross-Validation:** For supervised learning models, **5-fold cross-validation** will be applied to ensure stable and generalizable results.<br>
+
+- **Class Imbalance Handling:** Severe imbalance in **R2L** and **U2R** attack classes will be mitigated using **SMOTE (Synthetic Minority Oversampling Technique)** and **class-weight adjustments** during model training.<br>
+
+## Model Interpretability
+
+To ensure transparency and explainability in the results, this project will include interpretability analysis for both supervised and unsupervised models:<br>
+
+- **Tree-Based Models (Random Forest):** Feature importance plots will be used to identify the most influential network attributes contributing to intrusion detection decisions.<br>
+
+- **SVM and Deep Autoencoders:** The **SHAP (SHapley Additive exPlanations)** framework will be applied to quantify how each input feature affects individual model predictions, highlighting both global and local interpretability.<br>
+
+- **Unsupervised Models (LOF, DBSCAN, Elliptic Envelope):** Model behavior will be interpreted through visualization of **PCA-based decision boundaries**, **cluster separations**, and **anomaly score distributions**.<br>
+
+- **Autoencoder Reconstruction Analysis:** For deep learning models, reconstruction error plots will be examined to understand how effectively normal vs. anomalous traffic patterns are captured and separated.<br>
+
+- **Combined Insights:** Comparing interpretability outputs across models will help evaluate the trade-off between detection accuracy and explainability—an important factor in real-world IDS deployment.<br>
+
+- **Interpretability Trade-Offs:** Comparative analysis will examine the balance between model transparency and detection power. While deep or ensemble methods may offer superior accuracy, their complexity can obscure decision rationale. Simpler statistical models, though less accurate, provide clearer interpretive insights valuable for security analysts. This trade-off will be explicitly discussed in the results and conclusions.<br>
+
+## Evaluation Setup 
+
+The evaluation process will assess the performance, robustness, and reliability of all models through a consistent and structured framework:<br>
+
+- **Performance Metrics:** Model effectiveness will be quantified using **Precision**, **Recall**, **F1-Score**, **ROC-AUC**, and **Detection Rate** to capture both classification accuracy and anomaly detection strength.<br>
+
+- **Validation Strategy:** Results will be validated through a combination of **stratified 80/20 train–test split** and **5-fold cross-validation** to ensure generalization and mitigate overfitting.<br>
+
+- **Family-Wise and Rare Attack Evaluation:** Each attack family (DoS, Probe, R2L, and U2R) will be evaluated independently, with special attention to rare classes (R2L and U2R). Detection rates, false negatives, and confusion patterns for these low-frequency attacks will reveal how well unsupervised and supervised approaches generalize to scarce attack behaviors.<br>
+
+- **Threshold Optimization (Unsupervised Models):** Anomaly score thresholds (e.g., top 5% or 95th percentile) will be tuned on the training data to balance false positives and false negatives.<br>
+
+- **Baseline Comparison:** Model results will be benchmarked against **published NSL-KDD baselines** and recent IDS studies to contextualize performance improvements.<br>
+
+- **Visualization:** ROC curves, confusion matrices, and precision–recall plots will be used to visually compare detection quality and identify performance trade-offs among methods.<br>
 
 ## Questions
 
-1. How effectively can statistical anomaly detection methods identify malicious network traffic within the NSL-KDD dataset?<br>
-Or more specifically, which unsupervised techniques — such as Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), and DBSCAN — perform best in distinguishing normal traffic from various attack families (DoS, Probe, R2L, and U2R)? <br>
+1. How effectively can unsupervised anomaly detection methods identify malicious network traffic when trained only on normal data? <br>
 
-2. How does the performance of machine learning–based intrusion detection models compare to traditional statistical anomaly detectors?<br>
-Or more specifically, which algorithms — including Random Forest, Support Vector Machine (SVM), Isolation Forest, and Deep Autoencoders — achieve higher accuracy, precision, and recall when detecting network intrusions, and what trade-offs exist in terms of interpretability and computational cost?
+2. How does the performance of supervised machine learning–based intrusion detection compare with statistical anomaly detection methods in terms of detection accuracy, precision, recall, and interpretability?
+
+## Real-World Application Context
+
+This project models an **enterprise network intrusion detection system (IDS)**.<br>
+In real-world settings, such systems continuously monitor inbound and outbound connections to detect unusual traffic patterns.
+Findings from this analysis can be directly extended to:<br>
+- **Enterprise network monitoring**<br>
+- **Cloud service intrusion prevention**<br>
+- **IoT network anomaly detection**<br>
+- **Streaming data analysis** using similar architectures (e.g., online learning or real-time inference)<br>
+
+## Dataset Limitations and Justification
+
+Although the **NSL-KDD dataset** is dated and does not reflect modern encrypted or high-volume network traffic, it remains widely used in academic research because:<br>
+
+- It contains **well-structured, labeled attack categories**, making it ideal for benchmarking and comparing different algorithms.<br>
+
+- It enables **controlled, reproducible comparisons** between models without introducing data privacy or confidentiality issues.<br>
+
+- It provides **clear ground truth labels**, which are often unavailable in modern or proprietary network traffic datasets.<br>
+
+The goal is to develop and compare generalizable anomaly detection methods, which can later be adapted to more recent or proprietary datasets.<br>
+
+## Reproducibility and Version Control
+
+To ensure that all results are consistent and reproducible across runs and environments, this project follows strict versioning and organization practices:<br>
+
+- **Random Seeds:** All random processes (e.g., data splits, model initialization, SMOTE) will use **fixed random seeds** to ensure reproducibility.<br>
+
+- **Repository Organization:** The project repository will follow a clear, modular directory structure to separate data, notebooks, and sources.<br>
+
+```text
+project-root/
+│
+├── data/                # Raw and processed datasets
+├── notebooks/           # Jupyter notebooks for analysis and modeling
+├── src/                 # Preprocessing and utility code
+├── requirements.txt     # Python dependencies for environment setup
+└── README.md            # Project overview and usage instructions
+```
+- Experiment tracking will be implemented using **versioned notebooks and GitHub commits**, ensuring reproducibility.<br>
+- Dependencies and environment configuration will be captured in a requirements.txt file.<br>
+
+- All visualizations, experiment logs, and performance metrics will be versioned and stored in the repository for transparent result verification.<br>
 
 ## Analysis plan
 
@@ -162,4 +286,5 @@ Deliverables: Evaluation notebook and performance report.
 
 **Week 6 –** Final Analysis & Reporting
 The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios.
+Additionally, a **reflection phase** will visualize anomaly scores and latent embeddings (via PCA, t-SNE, UMAP) to assess separability between normal and attack samples. The final report will include a **comparative interpretability reflection**, discussing how the transparency–accuracy balance affects IDS deployment decisions.<br>
 Deliverables: Final project report and presentation slides.

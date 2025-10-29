@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Team 7 - Mehran Tajbakhsh">
-<meta name="description" content="The goal of this project is to detect anomalies in network traffic data using a combination of statistical and machine learning techniques.  Anomalies, or outliers, are data points that deviate significantly from normal behavior. In cybersecurity contexts, these anomalies often correspond to intrusions, attacks, or fraudulent activities.  I will use the NSL-KDD dataset, a well-established benchmark for evaluating intrusion detection systems (IDS). Through a structured process of exploratory data analysis, statistical anomaly detection, and machine learning modeling, this project aims to build a robust anomaly detection framework capable of identifying malicious network activity.  The actual NSL-KDD dataset is fairly large (nearly 4 million records). I will be using a smaller version of the data that is a 10% subset randomly sampled from the whole data.  Finally, I will compare performance across these methods and evaluate their ability to correctly flag network intrusions as anomalies.">
+<meta name="description" content="This project investigates the detection of anomalous network behavior using both statistical and machine learning techniques.  The study leverages the NSL-KDD dataset, a refined version of the KDD Cup 1999 intrusion detection benchmark, to evaluate different approaches for distinguishing between normal and malicious network traffic.     The project compares two methodological categories:  - Unsupervised anomaly detection, where models learn only from normal traffic and must identify outliers without attack labels.  - Supervised intrusion detection, where labeled attack data are used to train classifiers to recognize known attack patterns.    The actual NSL-KDD dataset is fairly large, containing nearly 4 million connection records.  To make the analysis computationally feasible while preserving the dataset’s diversity, this project will use a randomly selected 10% subset of the full data. This reduced sample maintains representative proportions of normal and attack classes, ensuring statistical validity while allowing for more efficient experimentation and model tuning.     The project will also address class imbalance through resampling and weighting techniques, apply standardized preprocessing (encoding, scaling, and feature selection), and evaluate each model’s performance using threshold-based anomaly scoring and classification metrics.  The ultimate goal is to develop a robust, interpretable intrusion detection framework suitable for enterprise and IoT network environments.">
 
 <title>Anomaly Detection in Network Traffic Using NSL-KDD Dataset – Final Project</title>
 <style>
@@ -4093,7 +4093,15 @@ vertical-align: -.125em;
    
   <ul>
   <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#methodology-overview" id="toc-methodology-overview" class="nav-link" data-scroll-target="#methodology-overview">Methodology Overview</a></li>
+  <li><a href="#threshold-definition-for-unsupervised-models" id="toc-threshold-definition-for-unsupervised-models" class="nav-link" data-scroll-target="#threshold-definition-for-unsupervised-models">Threshold Definition for Unsupervised Models:</a></li>
+  <li><a href="#data-preprocessing-and-feature-handling" id="toc-data-preprocessing-and-feature-handling" class="nav-link" data-scroll-target="#data-preprocessing-and-feature-handling">Data Preprocessing and Feature Handling</a></li>
+  <li><a href="#model-interpretability" id="toc-model-interpretability" class="nav-link" data-scroll-target="#model-interpretability">Model Interpretability</a></li>
+  <li><a href="#evaluation-setup" id="toc-evaluation-setup" class="nav-link" data-scroll-target="#evaluation-setup">Evaluation Setup</a></li>
   <li><a href="#questions" id="toc-questions" class="nav-link" data-scroll-target="#questions">Questions</a></li>
+  <li><a href="#real-world-application-context" id="toc-real-world-application-context" class="nav-link" data-scroll-target="#real-world-application-context">Real-World Application Context</a></li>
+  <li><a href="#dataset-limitations-and-justification" id="toc-dataset-limitations-and-justification" class="nav-link" data-scroll-target="#dataset-limitations-and-justification">Dataset Limitations and Justification</a></li>
+  <li><a href="#reproducibility-and-version-control" id="toc-reproducibility-and-version-control" class="nav-link" data-scroll-target="#reproducibility-and-version-control">Reproducibility and Version Control</a></li>
   <li><a href="#analysis-plan" id="toc-analysis-plan" class="nav-link" data-scroll-target="#analysis-plan">Analysis plan</a></li>
   </ul>
 </nav>
@@ -4110,7 +4118,7 @@ vertical-align: -.125em;
 
 <div>
   <div class="description">
-    The goal of this project is to detect anomalies in network traffic data using a combination of statistical and machine learning techniques.<br> Anomalies, or outliers, are data points that deviate significantly from normal behavior. In cybersecurity contexts, these anomalies often correspond to intrusions, attacks, or fraudulent activities.<br> I will use the NSL-KDD dataset, a well-established benchmark for evaluating intrusion detection systems (IDS). Through a structured process of exploratory data analysis, statistical anomaly detection, and machine learning modeling, this project aims to build a robust anomaly detection framework capable of identifying malicious network activity.<br> The actual NSL-KDD dataset is fairly large (nearly 4 million records). I will be using a smaller version of the data that is a 10% subset randomly sampled from the whole data.<br> Finally, I will compare performance across these methods and evaluate their ability to correctly flag network intrusions as anomalies.
+    This project investigates the detection of anomalous network behavior using both statistical and machine learning techniques.<br> The study leverages the <strong>NSL-KDD dataset</strong>, a refined version of the <strong>KDD Cup 1999</strong> intrusion detection benchmark, to evaluate different approaches for distinguishing between normal and malicious network traffic. <br> <br> The project compares two methodological categories:<br> - <strong>Unsupervised anomaly detection</strong>, where models learn only from normal traffic and must identify outliers without attack labels.<br> - <strong>Supervised intrusion detection</strong>, where labeled attack data are used to train classifiers to recognize known attack patterns.<br> <br> The actual NSL-KDD dataset is fairly large, containing nearly <strong>4 million connection records</strong>.<br> To make the analysis computationally feasible while preserving the dataset’s diversity, this project will use a <strong>randomly selected 10% subset</strong> of the full data. This reduced sample maintains representative proportions of normal and attack classes, ensuring statistical validity while allowing for more efficient experimentation and model tuning. <br> <br> The project will also address class imbalance through resampling and weighting techniques, apply standardized preprocessing (encoding, scaling, and feature selection), and evaluate each model’s performance using threshold-based anomaly scoring and classification metrics.<br> The ultimate goal is to develop a <strong>robust, interpretable intrusion detection framework</strong> suitable for <strong>enterprise and IoT network environments</strong>.
   </div>
 </div>
 
@@ -4142,7 +4150,7 @@ vertical-align: -.125em;
 
 <section id="dataset" class="level2">
 <h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>The <strong>NSL-KDD</strong> dataset is an improved successor to <strong>KDD Cup 1999</strong>, designed to mitigate key issues such as redundant records and extreme class imbalance.<br>It comprises <strong>network connection records</strong> with <strong>41 features</strong> (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating <strong>normal</strong> or one of several <strong>attack types</strong> grouped into four categories: <strong>DoS</strong>, <strong>Probe</strong>, <strong>R2L</strong>, and <strong>U2R</strong>.</p>
+<p>The NSL-KDD dataset is an enhanced version of the KDD Cup 1999 intrusion detection benchmark. <bt> It removes redundant records and provides a more balanced sample distribution for fair model evaluation. <br> Each record represents a network connection with 41 features describing various characteristics such as protocol type, service, traffic flags, and packet statistics.<br> The target label identifies whether a connection is normal or belongs to one of four attack families: <br> - <strong>DoS (Denial of Service):</strong> Overwhelms system resources (e.g., neptune, smurf, teardrop) <br> - <strong>Probe:</strong> Scans for vulnerabilities or open ports (e.g., satan, nmap, ipsweep) <br> - <strong>R2L (Remote to Local):</strong> Attempts to gain access remotely (e.g., guess_passwd, imap) <br> - <strong>U2R (User to Root):</strong> Escalates privileges locally (e.g., rootkit, buffer_overflow) <br></bt></p>
 <div id="dataset-summary" class="cell" data-message="false" data-execution_count="3">
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -4160,14 +4168,126 @@ and User to Root (U2R):
 </code></pre>
 </div>
 </div>
-<p>Why this dataset? <br> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).</p>
+<p><strong>Why this dataset?</strong> <br> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).</p>
+</section>
+<section id="methodology-overview" class="level2">
+<h2 class="anchored" data-anchor-id="methodology-overview">Methodology Overview</h2>
+<p>This project will implement two complementary detection approaches to compare how well statistical and learning-based methods can detect network intrusions. <br></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 19%">
+<col style="width: 23%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Approach Type</strong></th>
+<th><strong>Algorithms</strong></th>
+<th><strong>Training Data</strong></th>
+<th><strong>Evaluation Strategy</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Unsupervised Anomaly Detection</strong></td>
+<td>Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), DBSCAN</td>
+<td>Trained only on <strong>normal traffic</strong> (no attack labels)</td>
+<td>Evaluate anomaly scores using percentile-based thresholding (e.g., top 5% as anomalies); compute precision, recall, and false positive rate against true labels</td>
+</tr>
+<tr class="even">
+<td><strong>Supervised / Semi-Supervised Intrusion Detection</strong></td>
+<td>Random Forest, Support Vector Machine (SVM), Isolation Forest, Deep Autoencoder</td>
+<td>Trained on <strong>labeled normal and attack traffic</strong></td>
+<td>Evaluate using stratified 80/20 train-test split with <strong>5-fold cross-validation</strong>; compare Precision, Recall, F1-score, and ROC-AUC</td>
+</tr>
+</tbody>
+</table>
+<div class="center">
+<p><em>Table 1. Comparison of Supervised vs. Unsupervised Detection Approaches.</em></p>
+</div>
+</section>
+<section id="threshold-definition-for-unsupervised-models" class="level2">
+<h2 class="anchored" data-anchor-id="threshold-definition-for-unsupervised-models">Threshold Definition for Unsupervised Models:</h2>
+<p>For models like LOF and DBSCAN, anomaly scores will be transformed into binary outcomes using a threshold determined by the 95th percentile of the score distribution on training data. Models will be compared based on precision, recall, and false positive rate against true attack labels.</p>
+</section>
+<section id="data-preprocessing-and-feature-handling" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing-and-feature-handling">Data Preprocessing and Feature Handling</h2>
+<ul>
+<li><p><strong>Feature Encoding:</strong> Categorical features (<code>protocol_type</code>, <code>service</code>, and <code>flag</code>) will be transformed using <strong>One-Hot Encoding</strong> to convert them into numerical representations suitable for machine learning models.<br></p></li>
+<li><p><strong>Scaling:</strong> All numeric features will be standardized using <strong>StandardScaler</strong> to normalize feature magnitudes and support distance-based models such as SVM, LOF, and DBSCAN.<br></p></li>
+<li><p><strong>Dimensionality Reduction:</strong> <strong>Principal Component Analysis (PCA)</strong> will be applied to reduce feature dimensionality, minimize noise, and visualize decision boundaries in lower dimensions.<br></p></li>
+<li><p><strong>Latent-Space Visualization:</strong> Beyond PCA, t-SNE and UMAP will be applied to project high-dimensional data into 2D latent spaces. These visualizations will reveal natural clustering between normal and attack traffic, and illustrate how different models separate anomalous connections.<br></p></li>
+<li><p><strong>Feature Selection:</strong> Correlation filtering and low-variance thresholding will be used to eliminate redundant and non-informative predictors.<br></p></li>
+<li><p><strong>Train/Test Split:</strong> A <strong>stratified 80/20 split</strong> will ensure consistent class ratios between training and testing datasets, preserving representation of all attack families.<br></p></li>
+<li><p><strong>Cross-Validation:</strong> For supervised learning models, <strong>5-fold cross-validation</strong> will be applied to ensure stable and generalizable results.<br></p></li>
+<li><p><strong>Class Imbalance Handling:</strong> Severe imbalance in <strong>R2L</strong> and <strong>U2R</strong> attack classes will be mitigated using <strong>SMOTE (Synthetic Minority Oversampling Technique)</strong> and <strong>class-weight adjustments</strong> during model training.<br></p></li>
+</ul>
+</section>
+<section id="model-interpretability" class="level2">
+<h2 class="anchored" data-anchor-id="model-interpretability">Model Interpretability</h2>
+<p>To ensure transparency and explainability in the results, this project will include interpretability analysis for both supervised and unsupervised models:<br></p>
+<ul>
+<li><p><strong>Tree-Based Models (Random Forest):</strong> Feature importance plots will be used to identify the most influential network attributes contributing to intrusion detection decisions.<br></p></li>
+<li><p><strong>SVM and Deep Autoencoders:</strong> The <strong>SHAP (SHapley Additive exPlanations)</strong> framework will be applied to quantify how each input feature affects individual model predictions, highlighting both global and local interpretability.<br></p></li>
+<li><p><strong>Unsupervised Models (LOF, DBSCAN, Elliptic Envelope):</strong> Model behavior will be interpreted through visualization of <strong>PCA-based decision boundaries</strong>, <strong>cluster separations</strong>, and <strong>anomaly score distributions</strong>.<br></p></li>
+<li><p><strong>Autoencoder Reconstruction Analysis:</strong> For deep learning models, reconstruction error plots will be examined to understand how effectively normal vs. anomalous traffic patterns are captured and separated.<br></p></li>
+<li><p><strong>Combined Insights:</strong> Comparing interpretability outputs across models will help evaluate the trade-off between detection accuracy and explainability—an important factor in real-world IDS deployment.<br></p></li>
+<li><p><strong>Interpretability Trade-Offs:</strong> Comparative analysis will examine the balance between model transparency and detection power. While deep or ensemble methods may offer superior accuracy, their complexity can obscure decision rationale. Simpler statistical models, though less accurate, provide clearer interpretive insights valuable for security analysts. This trade-off will be explicitly discussed in the results and conclusions.<br></p></li>
+</ul>
+</section>
+<section id="evaluation-setup" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-setup">Evaluation Setup</h2>
+<p>The evaluation process will assess the performance, robustness, and reliability of all models through a consistent and structured framework:<br></p>
+<ul>
+<li><p><strong>Performance Metrics:</strong> Model effectiveness will be quantified using <strong>Precision</strong>, <strong>Recall</strong>, <strong>F1-Score</strong>, <strong>ROC-AUC</strong>, and <strong>Detection Rate</strong> to capture both classification accuracy and anomaly detection strength.<br></p></li>
+<li><p><strong>Validation Strategy:</strong> Results will be validated through a combination of <strong>stratified 80/20 train–test split</strong> and <strong>5-fold cross-validation</strong> to ensure generalization and mitigate overfitting.<br></p></li>
+<li><p><strong>Family-Wise and Rare Attack Evaluation:</strong> Each attack family (DoS, Probe, R2L, and U2R) will be evaluated independently, with special attention to rare classes (R2L and U2R). Detection rates, false negatives, and confusion patterns for these low-frequency attacks will reveal how well unsupervised and supervised approaches generalize to scarce attack behaviors.<br></p></li>
+<li><p><strong>Threshold Optimization (Unsupervised Models):</strong> Anomaly score thresholds (e.g., top 5% or 95th percentile) will be tuned on the training data to balance false positives and false negatives.<br></p></li>
+<li><p><strong>Baseline Comparison:</strong> Model results will be benchmarked against <strong>published NSL-KDD baselines</strong> and recent IDS studies to contextualize performance improvements.<br></p></li>
+<li><p><strong>Visualization:</strong> ROC curves, confusion matrices, and precision–recall plots will be used to visually compare detection quality and identify performance trade-offs among methods.<br></p></li>
+</ul>
 </section>
 <section id="questions" class="level2">
 <h2 class="anchored" data-anchor-id="questions">Questions</h2>
 <ol type="1">
-<li><p>How effectively can statistical anomaly detection methods identify malicious network traffic within the NSL-KDD dataset?<br> Or more specifically, which unsupervised techniques — such as Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), and DBSCAN — perform best in distinguishing normal traffic from various attack families (DoS, Probe, R2L, and U2R)? <br></p></li>
-<li><p>How does the performance of machine learning–based intrusion detection models compare to traditional statistical anomaly detectors?<br> Or more specifically, which algorithms — including Random Forest, Support Vector Machine (SVM), Isolation Forest, and Deep Autoencoders — achieve higher accuracy, precision, and recall when detecting network intrusions, and what trade-offs exist in terms of interpretability and computational cost?</p></li>
+<li><p>How effectively can unsupervised anomaly detection methods identify malicious network traffic when trained only on normal data? <br></p></li>
+<li><p>How does the performance of supervised machine learning–based intrusion detection compare with statistical anomaly detection methods in terms of detection accuracy, precision, recall, and interpretability?</p></li>
 </ol>
+</section>
+<section id="real-world-application-context" class="level2">
+<h2 class="anchored" data-anchor-id="real-world-application-context">Real-World Application Context</h2>
+<p>This project models an <strong>enterprise network intrusion detection system (IDS)</strong>.<br> In real-world settings, such systems continuously monitor inbound and outbound connections to detect unusual traffic patterns. Findings from this analysis can be directly extended to:<br> - <strong>Enterprise network monitoring</strong><br> - <strong>Cloud service intrusion prevention</strong><br> - <strong>IoT network anomaly detection</strong><br> - <strong>Streaming data analysis</strong> using similar architectures (e.g., online learning or real-time inference)<br></p>
+</section>
+<section id="dataset-limitations-and-justification" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-limitations-and-justification">Dataset Limitations and Justification</h2>
+<p>Although the <strong>NSL-KDD dataset</strong> is dated and does not reflect modern encrypted or high-volume network traffic, it remains widely used in academic research because:<br></p>
+<ul>
+<li><p>It contains <strong>well-structured, labeled attack categories</strong>, making it ideal for benchmarking and comparing different algorithms.<br></p></li>
+<li><p>It enables <strong>controlled, reproducible comparisons</strong> between models without introducing data privacy or confidentiality issues.<br></p></li>
+<li><p>It provides <strong>clear ground truth labels</strong>, which are often unavailable in modern or proprietary network traffic datasets.<br></p></li>
+</ul>
+<p>The goal is to develop and compare generalizable anomaly detection methods, which can later be adapted to more recent or proprietary datasets.<br></p>
+</section>
+<section id="reproducibility-and-version-control" class="level2">
+<h2 class="anchored" data-anchor-id="reproducibility-and-version-control">Reproducibility and Version Control</h2>
+<p>To ensure that all results are consistent and reproducible across runs and environments, this project follows strict versioning and organization practices:<br></p>
+<ul>
+<li><p><strong>Random Seeds:</strong> All random processes (e.g., data splits, model initialization, SMOTE) will use <strong>fixed random seeds</strong> to ensure reproducibility.<br></p></li>
+<li><p><strong>Repository Organization:</strong> The project repository will follow a clear, modular directory structure to separate data, notebooks, and sources.<br></p></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a href="#cb2-1"></a>project-root/</span>
+<span id="cb2-2"><a href="#cb2-2"></a>│</span>
+<span id="cb2-3"><a href="#cb2-3"></a>├── data/                # Raw and processed datasets</span>
+<span id="cb2-4"><a href="#cb2-4"></a>├── notebooks/           # Jupyter notebooks for analysis and modeling</span>
+<span id="cb2-5"><a href="#cb2-5"></a>├── src/                 # Preprocessing and utility code</span>
+<span id="cb2-6"><a href="#cb2-6"></a>├── requirements.txt     # Python dependencies for environment setup</span>
+<span id="cb2-7"><a href="#cb2-7"></a>└── README.md            # Project overview and usage instructions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><p>Experiment tracking will be implemented using <strong>versioned notebooks and GitHub commits</strong>, ensuring reproducibility.<br></p></li>
+<li><p>Dependencies and environment configuration will be captured in a requirements.txt file.<br></p></li>
+<li><p>All visualizations, experiment logs, and performance metrics will be versioned and stored in the repository for transparent result verification.<br></p></li>
+</ul>
 </section>
 <section id="analysis-plan" class="level2">
 <h2 class="anchored" data-anchor-id="analysis-plan">Analysis plan</h2>
@@ -4176,7 +4296,7 @@ and User to Root (U2R):
 <p><strong>Week 3 –</strong> Statistical Anomaly Detection Methods In this stage, classical statistical methods for anomaly detection will be implemented, including Z-Score, Elliptical Envelope, Local Outlier Factor (LOF), and DBSCAN. Their performance in identifying abnormal network behaviors will be analyzed and compared. Deliverables: Statistical anomaly detection notebook and comparative summary.</p>
 <p><strong>Week 4 –</strong> Machine Learning–Based Methods Modern learning-based detectors will be explored using Isolation Forest, One-Class SVM, and Deep Autoencoders. Models will be tuned for optimal performance, and detection boundaries will be visualized to interpret decision behavior. Deliverables: ML anomaly detection notebook and evaluation metrics.</p>
 <p><strong>Week 5 –</strong> Model Evaluation and Comparison All implemented methods will be assessed using standard performance metrics such as Precision, Recall, F1-score, ROC-AUC, and Detection Rate. Comparative analyses and ablation studies will be performed to evaluate robustness and generalization. Deliverables: Evaluation notebook and performance report.</p>
-<p><strong>Week 6 –</strong> Final Analysis &amp; Reporting The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios. Deliverables: Final project report and presentation slides.</p>
+<p><strong>Week 6 –</strong> Final Analysis &amp; Reporting The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios. Additionally, a <strong>reflection phase</strong> will visualize anomaly scores and latent embeddings (via PCA, t-SNE, UMAP) to assess separability between normal and attack samples. The final report will include a <strong>comparative interpretability reflection</strong>, discussing how the transparency–accuracy balance affects IDS deployment decisions.<br> Deliverables: Final project report and presentation slides.</p>
 
 
 <!-- -->
@@ -4687,171 +4807,296 @@ and User to Root (U2R):
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">---</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="an">title:</span><span class="co"> &quot;Anomaly Detection in Network Traffic Using NSL-KDD Dataset&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="an">subtitle:</span><span class="co"> &quot;Proposal&quot;</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="an">author:</span><span class="co"> </span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="co">  - name: &quot;Team 7 - Mehran Tajbakhsh&quot;</span></span>
-<span id="cb2-6"><a href="#cb2-6"></a><span class="co">    affiliations:</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a><span class="co">      - name: &quot;College of Information Science, University of Arizona&quot;</span></span>
-<span id="cb2-8"><a href="#cb2-8"></a><span class="an">description:</span><span class="co"> &quot;The goal of this project is to detect anomalies in network traffic data using a combination of statistical and machine learning techniques.&lt;br&gt;</span></span>
-<span id="cb2-9"><a href="#cb2-9"></a><span class="co">Anomalies, or outliers, are data points that deviate significantly from normal behavior. In cybersecurity contexts, these anomalies often correspond to intrusions, attacks, or fraudulent activities.&lt;br&gt;</span></span>
-<span id="cb2-10"><a href="#cb2-10"></a><span class="co">I will use the NSL-KDD dataset, a well-established benchmark for evaluating intrusion detection systems (IDS). Through a structured process of exploratory data analysis, statistical anomaly detection, and machine learning modeling, this project aims to build a robust anomaly detection framework capable of identifying malicious network activity.&lt;br&gt;</span></span>
-<span id="cb2-11"><a href="#cb2-11"></a><span class="co">The actual NSL-KDD dataset is fairly large (nearly 4 million records). I will be using a smaller version of the data that is a 10% subset randomly sampled from the whole data.&lt;br&gt;</span></span>
-<span id="cb2-12"><a href="#cb2-12"></a><span class="co">Finally, I will compare performance across these methods and evaluate their ability to correctly flag network intrusions as anomalies.</span></span>
-<span id="cb2-13"><a href="#cb2-13"></a><span class="co">&quot;</span></span>
-<span id="cb2-14"><a href="#cb2-14"></a><span class="an">format:</span></span>
-<span id="cb2-15"><a href="#cb2-15"></a><span class="co">  html:</span></span>
-<span id="cb2-16"><a href="#cb2-16"></a><span class="co">    code-tools: true</span></span>
-<span id="cb2-17"><a href="#cb2-17"></a><span class="co">    code-overflow: wrap</span></span>
-<span id="cb2-18"><a href="#cb2-18"></a><span class="co">    code-line-numbers: true</span></span>
-<span id="cb2-19"><a href="#cb2-19"></a><span class="co">    embed-resources: true</span></span>
-<span id="cb2-20"><a href="#cb2-20"></a><span class="an">editor:</span><span class="co"> visual</span></span>
-<span id="cb2-21"><a href="#cb2-21"></a><span class="an">code-annotations:</span><span class="co"> hover</span></span>
-<span id="cb2-22"><a href="#cb2-22"></a><span class="an">execute:</span></span>
-<span id="cb2-23"><a href="#cb2-23"></a><span class="co">  warning: false</span></span>
-<span id="cb2-24"><a href="#cb2-24"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
-<span id="cb2-25"><a href="#cb2-25"></a><span class="co">---</span></span>
-<span id="cb2-26"><a href="#cb2-26"></a></span>
-<span id="cb2-29"><a href="#cb2-29"></a><span class="in">```{python}</span></span>
-<span id="cb2-30"><a href="#cb2-30"></a><span class="co">#| label: load-pkgs</span></span>
-<span id="cb2-31"><a href="#cb2-31"></a><span class="co">#| message: false</span></span>
-<span id="cb2-32"><a href="#cb2-32"></a><span class="co">#| output: false</span></span>
-<span id="cb2-33"><a href="#cb2-33"></a><span class="co">#| echo: false</span></span>
-<span id="cb2-34"><a href="#cb2-34"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-35"><a href="#cb2-35"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
-<span id="cb2-36"><a href="#cb2-36"></a><span class="im">from</span> myst_nb <span class="im">import</span> glue</span>
-<span id="cb2-37"><a href="#cb2-37"></a><span class="in">```</span></span>
-<span id="cb2-38"><a href="#cb2-38"></a></span>
-<span id="cb2-39"><a href="#cb2-39"></a><span class="fu">## Dataset</span></span>
-<span id="cb2-40"><a href="#cb2-40"></a></span>
-<span id="cb2-43"><a href="#cb2-43"></a><span class="in">```{python}</span></span>
-<span id="cb2-44"><a href="#cb2-44"></a><span class="co">#| label: load-dataset</span></span>
-<span id="cb2-45"><a href="#cb2-45"></a><span class="co">#| echo: false</span></span>
-<span id="cb2-46"><a href="#cb2-46"></a><span class="co">#| message: false</span></span>
-<span id="cb2-47"><a href="#cb2-47"></a><span class="co">#| output: false</span></span>
-<span id="cb2-48"><a href="#cb2-48"></a></span>
-<span id="cb2-49"><a href="#cb2-49"></a></span>
-<span id="cb2-50"><a href="#cb2-50"></a>data_path <span class="op">=</span> Path(<span class="st">&quot;./data/NSL-KDD.data_10_percent_corrected&quot;</span>)</span>
-<span id="cb2-51"><a href="#cb2-51"></a></span>
-<span id="cb2-52"><a href="#cb2-52"></a>base_cols <span class="op">=</span> [</span>
-<span id="cb2-53"><a href="#cb2-53"></a>    <span class="st">&quot;duration&quot;</span>,<span class="st">&quot;protocol_type&quot;</span>,<span class="st">&quot;service&quot;</span>,<span class="st">&quot;flag&quot;</span>,<span class="st">&quot;src_bytes&quot;</span>,<span class="st">&quot;dst_bytes&quot;</span>,</span>
-<span id="cb2-54"><a href="#cb2-54"></a>    <span class="st">&quot;land&quot;</span>,<span class="st">&quot;wrong_fragment&quot;</span>,<span class="st">&quot;urgent&quot;</span>,<span class="st">&quot;hot&quot;</span>,<span class="st">&quot;num_failed_logins&quot;</span>,<span class="st">&quot;logged_in&quot;</span>,</span>
-<span id="cb2-55"><a href="#cb2-55"></a>    <span class="st">&quot;num_compromised&quot;</span>,<span class="st">&quot;root_shell&quot;</span>,<span class="st">&quot;su_attempted&quot;</span>,<span class="st">&quot;num_root&quot;</span>,<span class="st">&quot;num_file_creations&quot;</span>,</span>
-<span id="cb2-56"><a href="#cb2-56"></a>    <span class="st">&quot;num_shells&quot;</span>,<span class="st">&quot;num_access_files&quot;</span>,<span class="st">&quot;num_outbound_cmds&quot;</span>,<span class="st">&quot;is_host_login&quot;</span>,</span>
-<span id="cb2-57"><a href="#cb2-57"></a>    <span class="st">&quot;is_guest_login&quot;</span>,<span class="st">&quot;count&quot;</span>,<span class="st">&quot;srv_count&quot;</span>,<span class="st">&quot;serror_rate&quot;</span>,<span class="st">&quot;srv_serror_rate&quot;</span>,</span>
-<span id="cb2-58"><a href="#cb2-58"></a>    <span class="st">&quot;rerror_rate&quot;</span>,<span class="st">&quot;srv_rerror_rate&quot;</span>,<span class="st">&quot;same_srv_rate&quot;</span>,<span class="st">&quot;diff_srv_rate&quot;</span>,</span>
-<span id="cb2-59"><a href="#cb2-59"></a>    <span class="st">&quot;srv_diff_host_rate&quot;</span>,<span class="st">&quot;dst_host_count&quot;</span>,<span class="st">&quot;dst_host_srv_count&quot;</span>,</span>
-<span id="cb2-60"><a href="#cb2-60"></a>    <span class="st">&quot;dst_host_same_srv_rate&quot;</span>,<span class="st">&quot;dst_host_diff_srv_rate&quot;</span>,</span>
-<span id="cb2-61"><a href="#cb2-61"></a>    <span class="st">&quot;dst_host_same_src_port_rate&quot;</span>,<span class="st">&quot;dst_host_srv_diff_host_rate&quot;</span>,</span>
-<span id="cb2-62"><a href="#cb2-62"></a>    <span class="st">&quot;dst_host_serror_rate&quot;</span>,<span class="st">&quot;dst_host_srv_serror_rate&quot;</span>,</span>
-<span id="cb2-63"><a href="#cb2-63"></a>    <span class="st">&quot;dst_host_rerror_rate&quot;</span>,<span class="st">&quot;dst_host_srv_rerror_rate&quot;</span></span>
-<span id="cb2-64"><a href="#cb2-64"></a>]</span>
-<span id="cb2-65"><a href="#cb2-65"></a></span>
-<span id="cb2-66"><a href="#cb2-66"></a>tmp <span class="op">=</span> pd.read_csv(data_path, header<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb2-67"><a href="#cb2-67"></a><span class="cf">if</span> tmp.shape[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">42</span>:</span>
-<span id="cb2-68"><a href="#cb2-68"></a>    tmp.columns <span class="op">=</span> base_cols <span class="op">+</span> [<span class="st">&quot;label&quot;</span>]</span>
-<span id="cb2-69"><a href="#cb2-69"></a><span class="cf">elif</span> tmp.shape[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">43</span>:</span>
-<span id="cb2-70"><a href="#cb2-70"></a>    tmp.columns <span class="op">=</span> base_cols <span class="op">+</span> [<span class="st">&quot;label&quot;</span>,<span class="st">&quot;difficulty&quot;</span>]</span>
-<span id="cb2-71"><a href="#cb2-71"></a><span class="cf">else</span>:</span>
-<span id="cb2-72"><a href="#cb2-72"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f&quot;Unexpected column count </span><span class="sc">{</span>tmp<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> for KDD 10% file.&quot;</span>)</span>
-<span id="cb2-73"><a href="#cb2-73"></a></span>
-<span id="cb2-74"><a href="#cb2-74"></a>df <span class="op">=</span> tmp</span>
-<span id="cb2-75"><a href="#cb2-75"></a>df[<span class="st">&quot;label&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;label&quot;</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip().<span class="bu">str</span>.lower()</span>
-<span id="cb2-76"><a href="#cb2-76"></a></span>
-<span id="cb2-77"><a href="#cb2-77"></a><span class="kw">def</span> map_family(lbl: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb2-78"><a href="#cb2-78"></a>    <span class="cf">if</span> lbl <span class="op">==</span> <span class="st">&quot;normal.&quot;</span>: <span class="cf">return</span> <span class="st">&quot;normal&quot;</span></span>
-<span id="cb2-79"><a href="#cb2-79"></a>    l <span class="op">=</span> lbl</span>
-<span id="cb2-80"><a href="#cb2-80"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;neptune&quot;</span>,<span class="st">&quot;smurf&quot;</span>,<span class="st">&quot;back&quot;</span>,<span class="st">&quot;teardrop&quot;</span>,<span class="st">&quot;pod&quot;</span>,<span class="st">&quot;land&quot;</span>,<span class="st">&quot;apache2&quot;</span>,<span class="st">&quot;udpstorm&quot;</span>,<span class="st">&quot;processtable&quot;</span>,<span class="st">&quot;worm&quot;</span>,<span class="st">&quot;mailbomb&quot;</span>]):</span>
-<span id="cb2-81"><a href="#cb2-81"></a>        <span class="cf">return</span> <span class="st">&quot;DoS&quot;</span></span>
-<span id="cb2-82"><a href="#cb2-82"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;satan&quot;</span>,<span class="st">&quot;ipsweep&quot;</span>,<span class="st">&quot;nmap&quot;</span>,<span class="st">&quot;portsweep&quot;</span>,<span class="st">&quot;mscan&quot;</span>,<span class="st">&quot;saint&quot;</span>]):</span>
-<span id="cb2-83"><a href="#cb2-83"></a>        <span class="cf">return</span> <span class="st">&quot;Probe&quot;</span></span>
-<span id="cb2-84"><a href="#cb2-84"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;guess_passwd&quot;</span>,<span class="st">&quot;ftp_write&quot;</span>,<span class="st">&quot;imap&quot;</span>,<span class="st">&quot;phf&quot;</span>,<span class="st">&quot;multihop&quot;</span>,<span class="st">&quot;warezmaster&quot;</span>,<span class="st">&quot;warezclient&quot;</span>,<span class="st">&quot;spy&quot;</span>,<span class="st">&quot;xlock&quot;</span>,<span class="st">&quot;xsnoop&quot;</span>,<span class="st">&quot;snmpgetattack&quot;</span>,<span class="st">&quot;snmpguess&quot;</span>,<span class="st">&quot;httptunnel&quot;</span>,<span class="st">&quot;sendmail&quot;</span>,<span class="st">&quot;named&quot;</span>,<span class="st">&quot;worm_r2l&quot;</span>]):</span>
-<span id="cb2-85"><a href="#cb2-85"></a>        <span class="cf">return</span> <span class="st">&quot;R2L&quot;</span></span>
-<span id="cb2-86"><a href="#cb2-86"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;buffer_overflow&quot;</span>,<span class="st">&quot;loadmodule&quot;</span>,<span class="st">&quot;perl&quot;</span>,<span class="st">&quot;rootkit&quot;</span>,<span class="st">&quot;sqlattack&quot;</span>,<span class="st">&quot;xterm&quot;</span>,<span class="st">&quot;ps&quot;</span>,<span class="st">&quot;httptunnel_u2r&quot;</span>]):</span>
-<span id="cb2-87"><a href="#cb2-87"></a>        <span class="cf">return</span> <span class="st">&quot;U2R&quot;</span></span>
-<span id="cb2-88"><a href="#cb2-88"></a>    <span class="cf">return</span> <span class="st">&quot;attack_other&quot;</span></span>
-<span id="cb2-89"><a href="#cb2-89"></a></span>
-<span id="cb2-90"><a href="#cb2-90"></a>df[<span class="st">&quot;family&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;label&quot;</span>].<span class="bu">apply</span>(map_family)</span>
-<span id="cb2-91"><a href="#cb2-91"></a></span>
-<span id="cb2-92"><a href="#cb2-92"></a><span class="co"># ---- Inline stats (suppress display) ----</span></span>
-<span id="cb2-93"><a href="#cb2-93"></a>n_rows, n_cols <span class="op">=</span> df.shape</span>
-<span id="cb2-94"><a href="#cb2-94"></a>n_features <span class="op">=</span> n_cols <span class="op">-</span> (<span class="dv">2</span> <span class="cf">if</span> <span class="st">&quot;difficulty&quot;</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="dv">1</span>)</span>
-<span id="cb2-95"><a href="#cb2-95"></a></span>
-<span id="cb2-96"><a href="#cb2-96"></a>glue(<span class="st">&quot;n_rows&quot;</span>, n_rows, display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-97"><a href="#cb2-97"></a>glue(<span class="st">&quot;n_cols&quot;</span>, n_cols, display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-98"><a href="#cb2-98"></a>glue(<span class="st">&quot;n_features&quot;</span>, <span class="bu">int</span>(n_features), display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-99"><a href="#cb2-99"></a>glue(<span class="st">&quot;has_difficulty&quot;</span>, <span class="st">&quot;yes&quot;</span> <span class="cf">if</span> <span class="st">&quot;difficulty&quot;</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="st">&quot;no&quot;</span>, display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-100"><a href="#cb2-100"></a></span>
-<span id="cb2-101"><a href="#cb2-101"></a><span class="co"># Family percentages + counts</span></span>
-<span id="cb2-102"><a href="#cb2-102"></a>fam_pct <span class="op">=</span> df[<span class="st">&quot;family&quot;</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>).mul(<span class="dv">100</span>)</span>
-<span id="cb2-103"><a href="#cb2-103"></a>fam_cnt <span class="op">=</span> df[<span class="st">&quot;family&quot;</span>].value_counts()</span>
-<span id="cb2-104"><a href="#cb2-104"></a></span>
-<span id="cb2-105"><a href="#cb2-105"></a><span class="cf">for</span> fam <span class="kw">in</span> [<span class="st">&quot;normal&quot;</span>,<span class="st">&quot;DoS&quot;</span>,<span class="st">&quot;Probe&quot;</span>,<span class="st">&quot;R2L&quot;</span>,<span class="st">&quot;U2R&quot;</span>]:</span>
-<span id="cb2-106"><a href="#cb2-106"></a>    glue(<span class="ss">f&quot;p_</span><span class="sc">{</span>fam<span class="sc">}</span><span class="ss">&quot;</span>, <span class="bu">float</span>(fam_pct.get(fam, <span class="fl">0.0</span>)), display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-107"><a href="#cb2-107"></a>    glue(<span class="ss">f&quot;c_</span><span class="sc">{</span>fam<span class="sc">}</span><span class="ss">&quot;</span>, <span class="bu">int</span>(fam_cnt.get(fam, <span class="dv">0</span>)), display<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb2-108"><a href="#cb2-108"></a></span>
-<span id="cb2-109"><a href="#cb2-109"></a><span class="in">```</span></span>
-<span id="cb2-110"><a href="#cb2-110"></a>The **NSL-KDD** dataset is an improved successor to **KDD Cup 1999**, designed to mitigate key issues such as redundant records and extreme class imbalance.&lt;br&gt;It comprises **network connection records** with **41 features** (transport/application protocol, service, flag indicators, traffic statistics, etc.) and a label indicating **normal** or one of several **attack types** grouped into four categories: **DoS**, **Probe**, **R2L**, and **U2R**.</span>
-<span id="cb2-111"><a href="#cb2-111"></a></span>
-<span id="cb2-114"><a href="#cb2-114"></a><span class="in">```{python}</span></span>
-<span id="cb2-115"><a href="#cb2-115"></a><span class="co">#| label: Dataset Summary</span></span>
-<span id="cb2-116"><a href="#cb2-116"></a><span class="co">#| echo: false</span></span>
-<span id="cb2-117"><a href="#cb2-117"></a><span class="co">#| message: false</span></span>
-<span id="cb2-118"><a href="#cb2-118"></a></span>
-<span id="cb2-119"><a href="#cb2-119"></a>md <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
-<span id="cb2-120"><a href="#cb2-120"></a><span class="ss">This analysis uses the 10% of NSL-KDD corrected file with </span><span class="sc">{</span>n_rows<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>n_cols<span class="sc">}</span><span class="ss"> columns.</span></span>
-<span id="cb2-121"><a href="#cb2-121"></a></span>
-<span id="cb2-122"><a href="#cb2-122"></a><span class="ss">In the context of intrusion detection, the dataset encompasses four main families of </span></span>
-<span id="cb2-123"><a href="#cb2-123"></a><span class="ss">attack behaviors: Denial of Service (DoS), Probe, Remote to Local (R2L),</span></span>
-<span id="cb2-124"><a href="#cb2-124"></a><span class="ss">and User to Root (U2R): </span></span>
-<span id="cb2-125"><a href="#cb2-125"></a></span>
-<span id="cb2-126"><a href="#cb2-126"></a><span class="ss">- normal: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;normal&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;normal&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
-<span id="cb2-127"><a href="#cb2-127"></a><span class="ss">- DoS: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;DoS&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;DoS&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
-<span id="cb2-128"><a href="#cb2-128"></a><span class="ss">- Probe: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;Probe&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;Probe&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
-<span id="cb2-129"><a href="#cb2-129"></a><span class="ss">- R2L: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;R2L&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;R2L&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
-<span id="cb2-130"><a href="#cb2-130"></a><span class="ss">- U2R: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;U2R&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;U2R&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
-<span id="cb2-131"><a href="#cb2-131"></a><span class="ss">&quot;&quot;&quot;</span></span>
-<span id="cb2-132"><a href="#cb2-132"></a></span>
-<span id="cb2-133"><a href="#cb2-133"></a><span class="bu">print</span>(md)</span>
-<span id="cb2-134"><a href="#cb2-134"></a></span>
-<span id="cb2-135"><a href="#cb2-135"></a><span class="in">```</span></span>
-<span id="cb2-136"><a href="#cb2-136"></a></span>
-<span id="cb2-137"><a href="#cb2-137"></a>Why this dataset? <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).</span>
-<span id="cb2-138"><a href="#cb2-138"></a></span>
-<span id="cb2-139"><a href="#cb2-139"></a><span class="fu">## Questions</span></span>
-<span id="cb2-140"><a href="#cb2-140"></a></span>
-<span id="cb2-141"><a href="#cb2-141"></a><span class="ss">1. </span>How effectively can statistical anomaly detection methods identify malicious network traffic within the NSL-KDD dataset?<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb2-142"><a href="#cb2-142"></a>Or more specifically, which unsupervised techniques — such as Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), and DBSCAN — perform best in distinguishing normal traffic from various attack families (DoS, Probe, R2L, and U2R)? <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb2-143"><a href="#cb2-143"></a></span>
-<span id="cb2-144"><a href="#cb2-144"></a><span class="ss">2. </span>How does the performance of machine learning–based intrusion detection models compare to traditional statistical anomaly detectors?<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
-<span id="cb2-145"><a href="#cb2-145"></a>Or more specifically, which algorithms — including Random Forest, Support Vector Machine (SVM), Isolation Forest, and Deep Autoencoders — achieve higher accuracy, precision, and recall when detecting network intrusions, and what trade-offs exist in terms of interpretability and computational cost?</span>
-<span id="cb2-146"><a href="#cb2-146"></a></span>
-<span id="cb2-147"><a href="#cb2-147"></a><span class="fu">## Analysis plan</span></span>
-<span id="cb2-148"><a href="#cb2-148"></a></span>
-<span id="cb2-149"><a href="#cb2-149"></a>**Week 1 –** Problem Definition &amp; Data Preparation</span>
-<span id="cb2-150"><a href="#cb2-150"></a>The first week focuses on defining the objectives of anomaly detection within the NSL-KDD dataset. The dataset will be loaded, inspected, and preprocessed to ensure analytical readiness. Tasks include handling missing values, encoding categorical features, and scaling numerical variables.</span>
-<span id="cb2-151"><a href="#cb2-151"></a>Deliverables: Data preparation notebook and summary report.</span>
-<span id="cb2-152"><a href="#cb2-152"></a></span>
-<span id="cb2-153"><a href="#cb2-153"></a>**Week 2 –** Exploratory Data Analysis (EDA)</span>
-<span id="cb2-154"><a href="#cb2-154"></a>This phase aims to understand data distributions, feature correlations, and patterns of normal versus attack traffic. Visualization techniques will be applied to highlight key discriminative features and potential sources of anomaly.</span>
-<span id="cb2-155"><a href="#cb2-155"></a>Deliverables: EDA notebook with visual insights and descriptive summaries.</span>
-<span id="cb2-156"><a href="#cb2-156"></a></span>
-<span id="cb2-157"><a href="#cb2-157"></a>**Week 3 –** Statistical Anomaly Detection Methods</span>
-<span id="cb2-158"><a href="#cb2-158"></a>In this stage, classical statistical methods for anomaly detection will be implemented, including Z-Score, Elliptical Envelope, Local Outlier Factor (LOF), and DBSCAN. Their performance in identifying abnormal network behaviors will be analyzed and compared.</span>
-<span id="cb2-159"><a href="#cb2-159"></a>Deliverables: Statistical anomaly detection notebook and comparative summary.</span>
-<span id="cb2-160"><a href="#cb2-160"></a></span>
-<span id="cb2-161"><a href="#cb2-161"></a>**Week 4 –** Machine Learning–Based Methods</span>
-<span id="cb2-162"><a href="#cb2-162"></a>Modern learning-based detectors will be explored using Isolation Forest, One-Class SVM, and Deep Autoencoders. Models will be tuned for optimal performance, and detection boundaries will be visualized to interpret decision behavior.</span>
-<span id="cb2-163"><a href="#cb2-163"></a>Deliverables: ML anomaly detection notebook and evaluation metrics.</span>
-<span id="cb2-164"><a href="#cb2-164"></a></span>
-<span id="cb2-165"><a href="#cb2-165"></a>**Week 5 –** Model Evaluation and Comparison</span>
-<span id="cb2-166"><a href="#cb2-166"></a>All implemented methods will be assessed using standard performance metrics such as Precision, Recall, F1-score, ROC-AUC, and Detection Rate. Comparative analyses and ablation studies will be performed to evaluate robustness and generalization.</span>
-<span id="cb2-167"><a href="#cb2-167"></a>Deliverables: Evaluation notebook and performance report.</span>
-<span id="cb2-168"><a href="#cb2-168"></a></span>
-<span id="cb2-169"><a href="#cb2-169"></a>**Week 6 –** Final Analysis &amp; Reporting</span>
-<span id="cb2-170"><a href="#cb2-170"></a>The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios.</span>
-<span id="cb2-171"><a href="#cb2-171"></a>Deliverables: Final project report and presentation slides.</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="an">title:</span><span class="co"> &quot;Anomaly Detection in Network Traffic Using NSL-KDD Dataset&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="an">subtitle:</span><span class="co"> &quot;Proposal&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="an">author:</span><span class="co"> </span></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">  - name: &quot;Team 7 - Mehran Tajbakhsh&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co">    affiliations:</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="co">      - name: &quot;College of Information Science, University of Arizona&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="an">description:</span><span class="co"> &quot;  This project investigates the detection of anomalous network behavior using both statistical and machine learning techniques.&lt;br&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="co">The study leverages the **NSL-KDD dataset**, a refined version of the **KDD Cup 1999** intrusion detection benchmark, to evaluate</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">different approaches for distinguishing between normal and malicious network traffic. &lt;br&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">&lt;br&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a><span class="co">The project compares two methodological categories:&lt;br&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a></span>
+<span id="cb3-14"><a href="#cb3-14"></a><span class="co">- **Unsupervised anomaly detection**, where models learn only from normal traffic and must identify outliers without attack labels.&lt;br&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a><span class="co">- **Supervised intrusion detection**, where labeled attack data are used to train classifiers to recognize known attack patterns.&lt;br&gt;</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="co">&lt;br&gt;</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co">       </span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="co">The actual NSL-KDD dataset is fairly large, containing nearly **4 million connection records**.&lt;br&gt;</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a><span class="co">To make the analysis computationally feasible while preserving the dataset’s diversity, this project will use a **randomly selected 10% subset** of the full data. This reduced sample maintains representative proportions of normal and attack classes, ensuring statistical validity while allowing for more efficient experimentation and model tuning. &lt;br&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="co">&lt;br&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="co">The project will also address class imbalance through resampling and weighting techniques, apply standardized preprocessing (encoding, scaling, and feature selection), and evaluate each model’s performance using threshold-based anomaly scoring and classification metrics.&lt;br&gt;  </span></span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="co">  The ultimate goal is to develop a **robust, interpretable intrusion detection framework** suitable for **enterprise and IoT network environments**.</span></span>
+<span id="cb3-23"><a href="#cb3-23"></a><span class="co">&quot;</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="an">format:</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="co">  html:</span></span>
+<span id="cb3-26"><a href="#cb3-26"></a><span class="co">    code-tools: true</span></span>
+<span id="cb3-27"><a href="#cb3-27"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb3-28"><a href="#cb3-28"></a><span class="co">    code-line-numbers: true</span></span>
+<span id="cb3-29"><a href="#cb3-29"></a><span class="co">    embed-resources: true</span></span>
+<span id="cb3-30"><a href="#cb3-30"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="an">code-annotations:</span><span class="co"> hover</span></span>
+<span id="cb3-32"><a href="#cb3-32"></a><span class="an">execute:</span></span>
+<span id="cb3-33"><a href="#cb3-33"></a><span class="co">  warning: false</span></span>
+<span id="cb3-34"><a href="#cb3-34"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a><span class="co">---</span></span>
+<span id="cb3-36"><a href="#cb3-36"></a></span>
+<span id="cb3-39"><a href="#cb3-39"></a><span class="in">```{python}</span></span>
+<span id="cb3-40"><a href="#cb3-40"></a><span class="co">#| label: load-pkgs</span></span>
+<span id="cb3-41"><a href="#cb3-41"></a><span class="co">#| message: false</span></span>
+<span id="cb3-42"><a href="#cb3-42"></a><span class="co">#| output: false</span></span>
+<span id="cb3-43"><a href="#cb3-43"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-44"><a href="#cb3-44"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-45"><a href="#cb3-45"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb3-46"><a href="#cb3-46"></a><span class="im">from</span> myst_nb <span class="im">import</span> glue</span>
+<span id="cb3-47"><a href="#cb3-47"></a><span class="in">```</span></span>
+<span id="cb3-48"><a href="#cb3-48"></a></span>
+<span id="cb3-49"><a href="#cb3-49"></a><span class="fu">## Dataset</span></span>
+<span id="cb3-50"><a href="#cb3-50"></a></span>
+<span id="cb3-53"><a href="#cb3-53"></a><span class="in">```{python}</span></span>
+<span id="cb3-54"><a href="#cb3-54"></a><span class="co">#| label: load-dataset</span></span>
+<span id="cb3-55"><a href="#cb3-55"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-56"><a href="#cb3-56"></a><span class="co">#| message: false</span></span>
+<span id="cb3-57"><a href="#cb3-57"></a><span class="co">#| output: false</span></span>
+<span id="cb3-58"><a href="#cb3-58"></a></span>
+<span id="cb3-59"><a href="#cb3-59"></a></span>
+<span id="cb3-60"><a href="#cb3-60"></a>data_path <span class="op">=</span> Path(<span class="st">&quot;./data/NSL-KDD.data_10_percent_corrected&quot;</span>)</span>
+<span id="cb3-61"><a href="#cb3-61"></a></span>
+<span id="cb3-62"><a href="#cb3-62"></a>base_cols <span class="op">=</span> [</span>
+<span id="cb3-63"><a href="#cb3-63"></a>    <span class="st">&quot;duration&quot;</span>,<span class="st">&quot;protocol_type&quot;</span>,<span class="st">&quot;service&quot;</span>,<span class="st">&quot;flag&quot;</span>,<span class="st">&quot;src_bytes&quot;</span>,<span class="st">&quot;dst_bytes&quot;</span>,</span>
+<span id="cb3-64"><a href="#cb3-64"></a>    <span class="st">&quot;land&quot;</span>,<span class="st">&quot;wrong_fragment&quot;</span>,<span class="st">&quot;urgent&quot;</span>,<span class="st">&quot;hot&quot;</span>,<span class="st">&quot;num_failed_logins&quot;</span>,<span class="st">&quot;logged_in&quot;</span>,</span>
+<span id="cb3-65"><a href="#cb3-65"></a>    <span class="st">&quot;num_compromised&quot;</span>,<span class="st">&quot;root_shell&quot;</span>,<span class="st">&quot;su_attempted&quot;</span>,<span class="st">&quot;num_root&quot;</span>,<span class="st">&quot;num_file_creations&quot;</span>,</span>
+<span id="cb3-66"><a href="#cb3-66"></a>    <span class="st">&quot;num_shells&quot;</span>,<span class="st">&quot;num_access_files&quot;</span>,<span class="st">&quot;num_outbound_cmds&quot;</span>,<span class="st">&quot;is_host_login&quot;</span>,</span>
+<span id="cb3-67"><a href="#cb3-67"></a>    <span class="st">&quot;is_guest_login&quot;</span>,<span class="st">&quot;count&quot;</span>,<span class="st">&quot;srv_count&quot;</span>,<span class="st">&quot;serror_rate&quot;</span>,<span class="st">&quot;srv_serror_rate&quot;</span>,</span>
+<span id="cb3-68"><a href="#cb3-68"></a>    <span class="st">&quot;rerror_rate&quot;</span>,<span class="st">&quot;srv_rerror_rate&quot;</span>,<span class="st">&quot;same_srv_rate&quot;</span>,<span class="st">&quot;diff_srv_rate&quot;</span>,</span>
+<span id="cb3-69"><a href="#cb3-69"></a>    <span class="st">&quot;srv_diff_host_rate&quot;</span>,<span class="st">&quot;dst_host_count&quot;</span>,<span class="st">&quot;dst_host_srv_count&quot;</span>,</span>
+<span id="cb3-70"><a href="#cb3-70"></a>    <span class="st">&quot;dst_host_same_srv_rate&quot;</span>,<span class="st">&quot;dst_host_diff_srv_rate&quot;</span>,</span>
+<span id="cb3-71"><a href="#cb3-71"></a>    <span class="st">&quot;dst_host_same_src_port_rate&quot;</span>,<span class="st">&quot;dst_host_srv_diff_host_rate&quot;</span>,</span>
+<span id="cb3-72"><a href="#cb3-72"></a>    <span class="st">&quot;dst_host_serror_rate&quot;</span>,<span class="st">&quot;dst_host_srv_serror_rate&quot;</span>,</span>
+<span id="cb3-73"><a href="#cb3-73"></a>    <span class="st">&quot;dst_host_rerror_rate&quot;</span>,<span class="st">&quot;dst_host_srv_rerror_rate&quot;</span></span>
+<span id="cb3-74"><a href="#cb3-74"></a>]</span>
+<span id="cb3-75"><a href="#cb3-75"></a></span>
+<span id="cb3-76"><a href="#cb3-76"></a>tmp <span class="op">=</span> pd.read_csv(data_path, header<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb3-77"><a href="#cb3-77"></a><span class="cf">if</span> tmp.shape[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">42</span>:</span>
+<span id="cb3-78"><a href="#cb3-78"></a>    tmp.columns <span class="op">=</span> base_cols <span class="op">+</span> [<span class="st">&quot;label&quot;</span>]</span>
+<span id="cb3-79"><a href="#cb3-79"></a><span class="cf">elif</span> tmp.shape[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">43</span>:</span>
+<span id="cb3-80"><a href="#cb3-80"></a>    tmp.columns <span class="op">=</span> base_cols <span class="op">+</span> [<span class="st">&quot;label&quot;</span>,<span class="st">&quot;difficulty&quot;</span>]</span>
+<span id="cb3-81"><a href="#cb3-81"></a><span class="cf">else</span>:</span>
+<span id="cb3-82"><a href="#cb3-82"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="ss">f&quot;Unexpected column count </span><span class="sc">{</span>tmp<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> for KDD 10% file.&quot;</span>)</span>
+<span id="cb3-83"><a href="#cb3-83"></a></span>
+<span id="cb3-84"><a href="#cb3-84"></a>df <span class="op">=</span> tmp</span>
+<span id="cb3-85"><a href="#cb3-85"></a>df[<span class="st">&quot;label&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;label&quot;</span>].astype(<span class="bu">str</span>).<span class="bu">str</span>.strip().<span class="bu">str</span>.lower()</span>
+<span id="cb3-86"><a href="#cb3-86"></a></span>
+<span id="cb3-87"><a href="#cb3-87"></a><span class="kw">def</span> map_family(lbl: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb3-88"><a href="#cb3-88"></a>    <span class="cf">if</span> lbl <span class="op">==</span> <span class="st">&quot;normal.&quot;</span>: <span class="cf">return</span> <span class="st">&quot;normal&quot;</span></span>
+<span id="cb3-89"><a href="#cb3-89"></a>    l <span class="op">=</span> lbl</span>
+<span id="cb3-90"><a href="#cb3-90"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;neptune&quot;</span>,<span class="st">&quot;smurf&quot;</span>,<span class="st">&quot;back&quot;</span>,<span class="st">&quot;teardrop&quot;</span>,<span class="st">&quot;pod&quot;</span>,<span class="st">&quot;land&quot;</span>,<span class="st">&quot;apache2&quot;</span>,<span class="st">&quot;udpstorm&quot;</span>,<span class="st">&quot;processtable&quot;</span>,<span class="st">&quot;worm&quot;</span>,<span class="st">&quot;mailbomb&quot;</span>]):</span>
+<span id="cb3-91"><a href="#cb3-91"></a>        <span class="cf">return</span> <span class="st">&quot;DoS&quot;</span></span>
+<span id="cb3-92"><a href="#cb3-92"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;satan&quot;</span>,<span class="st">&quot;ipsweep&quot;</span>,<span class="st">&quot;nmap&quot;</span>,<span class="st">&quot;portsweep&quot;</span>,<span class="st">&quot;mscan&quot;</span>,<span class="st">&quot;saint&quot;</span>]):</span>
+<span id="cb3-93"><a href="#cb3-93"></a>        <span class="cf">return</span> <span class="st">&quot;Probe&quot;</span></span>
+<span id="cb3-94"><a href="#cb3-94"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;guess_passwd&quot;</span>,<span class="st">&quot;ftp_write&quot;</span>,<span class="st">&quot;imap&quot;</span>,<span class="st">&quot;phf&quot;</span>,<span class="st">&quot;multihop&quot;</span>,<span class="st">&quot;warezmaster&quot;</span>,<span class="st">&quot;warezclient&quot;</span>,<span class="st">&quot;spy&quot;</span>,<span class="st">&quot;xlock&quot;</span>,<span class="st">&quot;xsnoop&quot;</span>,<span class="st">&quot;snmpgetattack&quot;</span>,<span class="st">&quot;snmpguess&quot;</span>,<span class="st">&quot;httptunnel&quot;</span>,<span class="st">&quot;sendmail&quot;</span>,<span class="st">&quot;named&quot;</span>,<span class="st">&quot;worm_r2l&quot;</span>]):</span>
+<span id="cb3-95"><a href="#cb3-95"></a>        <span class="cf">return</span> <span class="st">&quot;R2L&quot;</span></span>
+<span id="cb3-96"><a href="#cb3-96"></a>    <span class="cf">if</span> <span class="bu">any</span>(x <span class="kw">in</span> l <span class="cf">for</span> x <span class="kw">in</span> [<span class="st">&quot;buffer_overflow&quot;</span>,<span class="st">&quot;loadmodule&quot;</span>,<span class="st">&quot;perl&quot;</span>,<span class="st">&quot;rootkit&quot;</span>,<span class="st">&quot;sqlattack&quot;</span>,<span class="st">&quot;xterm&quot;</span>,<span class="st">&quot;ps&quot;</span>,<span class="st">&quot;httptunnel_u2r&quot;</span>]):</span>
+<span id="cb3-97"><a href="#cb3-97"></a>        <span class="cf">return</span> <span class="st">&quot;U2R&quot;</span></span>
+<span id="cb3-98"><a href="#cb3-98"></a>    <span class="cf">return</span> <span class="st">&quot;attack_other&quot;</span></span>
+<span id="cb3-99"><a href="#cb3-99"></a></span>
+<span id="cb3-100"><a href="#cb3-100"></a>df[<span class="st">&quot;family&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;label&quot;</span>].<span class="bu">apply</span>(map_family)</span>
+<span id="cb3-101"><a href="#cb3-101"></a></span>
+<span id="cb3-102"><a href="#cb3-102"></a><span class="co"># ---- Inline stats (suppress display) ----</span></span>
+<span id="cb3-103"><a href="#cb3-103"></a>n_rows, n_cols <span class="op">=</span> df.shape</span>
+<span id="cb3-104"><a href="#cb3-104"></a>n_features <span class="op">=</span> n_cols <span class="op">-</span> (<span class="dv">2</span> <span class="cf">if</span> <span class="st">&quot;difficulty&quot;</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="dv">1</span>)</span>
+<span id="cb3-105"><a href="#cb3-105"></a></span>
+<span id="cb3-106"><a href="#cb3-106"></a>glue(<span class="st">&quot;n_rows&quot;</span>, n_rows, display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-107"><a href="#cb3-107"></a>glue(<span class="st">&quot;n_cols&quot;</span>, n_cols, display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-108"><a href="#cb3-108"></a>glue(<span class="st">&quot;n_features&quot;</span>, <span class="bu">int</span>(n_features), display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-109"><a href="#cb3-109"></a>glue(<span class="st">&quot;has_difficulty&quot;</span>, <span class="st">&quot;yes&quot;</span> <span class="cf">if</span> <span class="st">&quot;difficulty&quot;</span> <span class="kw">in</span> df.columns <span class="cf">else</span> <span class="st">&quot;no&quot;</span>, display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-110"><a href="#cb3-110"></a></span>
+<span id="cb3-111"><a href="#cb3-111"></a><span class="co"># Family percentages + counts</span></span>
+<span id="cb3-112"><a href="#cb3-112"></a>fam_pct <span class="op">=</span> df[<span class="st">&quot;family&quot;</span>].value_counts(normalize<span class="op">=</span><span class="va">True</span>).mul(<span class="dv">100</span>)</span>
+<span id="cb3-113"><a href="#cb3-113"></a>fam_cnt <span class="op">=</span> df[<span class="st">&quot;family&quot;</span>].value_counts()</span>
+<span id="cb3-114"><a href="#cb3-114"></a></span>
+<span id="cb3-115"><a href="#cb3-115"></a><span class="cf">for</span> fam <span class="kw">in</span> [<span class="st">&quot;normal&quot;</span>,<span class="st">&quot;DoS&quot;</span>,<span class="st">&quot;Probe&quot;</span>,<span class="st">&quot;R2L&quot;</span>,<span class="st">&quot;U2R&quot;</span>]:</span>
+<span id="cb3-116"><a href="#cb3-116"></a>    glue(<span class="ss">f&quot;p_</span><span class="sc">{</span>fam<span class="sc">}</span><span class="ss">&quot;</span>, <span class="bu">float</span>(fam_pct.get(fam, <span class="fl">0.0</span>)), display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-117"><a href="#cb3-117"></a>    glue(<span class="ss">f&quot;c_</span><span class="sc">{</span>fam<span class="sc">}</span><span class="ss">&quot;</span>, <span class="bu">int</span>(fam_cnt.get(fam, <span class="dv">0</span>)), display<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb3-118"><a href="#cb3-118"></a></span>
+<span id="cb3-119"><a href="#cb3-119"></a><span class="in">```</span></span>
+<span id="cb3-120"><a href="#cb3-120"></a>The NSL-KDD dataset is an enhanced version of the KDD Cup 1999 intrusion detection benchmark. <span class="dt">&lt;</span><span class="kw">bt</span><span class="dt">&gt;</span></span>
+<span id="cb3-121"><a href="#cb3-121"></a>It removes redundant records and provides a more balanced sample distribution for fair model evaluation. <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-122"><a href="#cb3-122"></a>Each record represents a network connection with 41 features describing various characteristics such as protocol type, service, traffic flags, and packet statistics.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-123"><a href="#cb3-123"></a>The target label identifies whether a connection is normal or belongs to one of four attack families: <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-124"><a href="#cb3-124"></a><span class="ss">- </span>**DoS (Denial of Service):** Overwhelms system resources (e.g., neptune, smurf, teardrop) <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-125"><a href="#cb3-125"></a><span class="ss">- </span>**Probe:** Scans for vulnerabilities or open ports (e.g., satan, nmap, ipsweep) <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-126"><a href="#cb3-126"></a><span class="ss">- </span>**R2L (Remote to Local):** Attempts to gain access remotely (e.g., guess_passwd, imap) <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-127"><a href="#cb3-127"></a><span class="ss">- </span>**U2R (User to Root):** Escalates privileges locally (e.g., rootkit, buffer_overflow) <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-130"><a href="#cb3-130"></a><span class="in">```{python}</span></span>
+<span id="cb3-131"><a href="#cb3-131"></a><span class="co">#| label: Dataset Summary</span></span>
+<span id="cb3-132"><a href="#cb3-132"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-133"><a href="#cb3-133"></a><span class="co">#| message: false</span></span>
+<span id="cb3-134"><a href="#cb3-134"></a></span>
+<span id="cb3-135"><a href="#cb3-135"></a>md <span class="op">=</span> <span class="ss">f&quot;&quot;&quot;</span></span>
+<span id="cb3-136"><a href="#cb3-136"></a><span class="ss">This analysis uses the 10% of NSL-KDD corrected file with </span><span class="sc">{</span>n_rows<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>n_cols<span class="sc">}</span><span class="ss"> columns.</span></span>
+<span id="cb3-137"><a href="#cb3-137"></a></span>
+<span id="cb3-138"><a href="#cb3-138"></a><span class="ss">In the context of intrusion detection, the dataset encompasses four main families of </span></span>
+<span id="cb3-139"><a href="#cb3-139"></a><span class="ss">attack behaviors: Denial of Service (DoS), Probe, Remote to Local (R2L),</span></span>
+<span id="cb3-140"><a href="#cb3-140"></a><span class="ss">and User to Root (U2R): </span></span>
+<span id="cb3-141"><a href="#cb3-141"></a></span>
+<span id="cb3-142"><a href="#cb3-142"></a><span class="ss">- normal: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;normal&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;normal&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-143"><a href="#cb3-143"></a><span class="ss">- DoS: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;DoS&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;DoS&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-144"><a href="#cb3-144"></a><span class="ss">- Probe: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;Probe&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;Probe&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-145"><a href="#cb3-145"></a><span class="ss">- R2L: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;R2L&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;R2L&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-146"><a href="#cb3-146"></a><span class="ss">- U2R: </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="sc">.</span>mul(<span class="dv">100</span>)<span class="sc">.</span>get(<span class="st">&quot;U2R&quot;</span>, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">% (n = </span><span class="sc">{</span>df[<span class="st">&quot;family&quot;</span>]<span class="sc">.</span>value_counts()<span class="sc">.</span>get(<span class="st">&quot;U2R&quot;</span>, <span class="dv">0</span>)<span class="sc">}</span><span class="ss">)</span></span>
+<span id="cb3-147"><a href="#cb3-147"></a><span class="ss">&quot;&quot;&quot;</span></span>
+<span id="cb3-148"><a href="#cb3-148"></a></span>
+<span id="cb3-149"><a href="#cb3-149"></a><span class="bu">print</span>(md)</span>
+<span id="cb3-150"><a href="#cb3-150"></a></span>
+<span id="cb3-151"><a href="#cb3-151"></a><span class="in">```</span></span>
+<span id="cb3-152"><a href="#cb3-152"></a></span>
+<span id="cb3-153"><a href="#cb3-153"></a>**Why this dataset?** <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span> It’s the canonical benchmark for intrusion/anomaly detection and complements NSL-KDD, which addresses redundancy/imbalance issues. Its size, variety of features (categorical + numeric), and labeled attacks make it ideal for comparing statistical (Z-Score, Elliptical Envelope, LOF, DBSCAN) and ML detectors (Isolation Forest, OC-SVM, Deep Autoencoders).</span>
+<span id="cb3-154"><a href="#cb3-154"></a></span>
+<span id="cb3-155"><a href="#cb3-155"></a><span class="fu">## Methodology Overview</span></span>
+<span id="cb3-156"><a href="#cb3-156"></a></span>
+<span id="cb3-157"><a href="#cb3-157"></a>This project will implement two complementary detection approaches to compare how well statistical and learning-based methods can detect network intrusions. <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-158"><a href="#cb3-158"></a></span>
+<span id="cb3-159"><a href="#cb3-159"></a><span class="pp">|</span> **Approach Type** | **Algorithms** | **Training Data** | **Evaluation Strategy** <span class="pp">|</span></span>
+<span id="cb3-160"><a href="#cb3-160"></a><span class="pp">|--------------------|----------------|-------------------|--------------------------|</span></span>
+<span id="cb3-161"><a href="#cb3-161"></a><span class="pp">|</span> **Unsupervised Anomaly Detection** | Z-Score, Elliptic Envelope, Local Outlier Factor (LOF), DBSCAN | Trained only on **normal traffic** (no attack labels) <span class="pp">|</span> Evaluate anomaly scores using percentile-based thresholding (e.g., top 5% as anomalies); compute precision, recall, and false positive rate against true labels <span class="pp">|</span></span>
+<span id="cb3-162"><a href="#cb3-162"></a><span class="pp">|</span> **Supervised / Semi-Supervised Intrusion Detection** | Random Forest, Support Vector Machine (SVM), Isolation Forest, Deep Autoencoder | Trained on **labeled normal and attack traffic** | Evaluate using stratified 80/20 train-test split with **5-fold cross-validation**; compare Precision, Recall, F1-score, and ROC-AUC <span class="pp">|</span></span>
+<span id="cb3-163"><a href="#cb3-163"></a></span>
+<span id="cb3-164"><a href="#cb3-164"></a>:::{.center}</span>
+<span id="cb3-165"><a href="#cb3-165"></a>*Table 1. Comparison of Supervised vs. Unsupervised Detection Approaches.*</span>
+<span id="cb3-166"><a href="#cb3-166"></a>:::</span>
+<span id="cb3-167"><a href="#cb3-167"></a></span>
+<span id="cb3-168"><a href="#cb3-168"></a><span class="fu">## Threshold Definition for Unsupervised Models:</span></span>
+<span id="cb3-169"><a href="#cb3-169"></a>For models like LOF and DBSCAN, anomaly scores will be transformed into binary outcomes using a threshold determined by the 95th percentile of the score distribution on training data. Models will be compared based on precision, recall, and false positive rate against true attack labels.</span>
+<span id="cb3-170"><a href="#cb3-170"></a></span>
+<span id="cb3-171"><a href="#cb3-171"></a><span class="fu">## Data Preprocessing and Feature Handling</span></span>
+<span id="cb3-172"><a href="#cb3-172"></a></span>
+<span id="cb3-173"><a href="#cb3-173"></a><span class="ss">- </span>**Feature Encoding:** Categorical features (`protocol_type`, `service`, and `flag`) will be transformed using **One-Hot Encoding** to convert them into numerical representations suitable for machine learning models.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-174"><a href="#cb3-174"></a></span>
+<span id="cb3-175"><a href="#cb3-175"></a><span class="ss">- </span>**Scaling:** All numeric features will be standardized using **StandardScaler** to normalize feature magnitudes and support distance-based models such as SVM, LOF, and DBSCAN.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-176"><a href="#cb3-176"></a></span>
+<span id="cb3-177"><a href="#cb3-177"></a><span class="ss">- </span>**Dimensionality Reduction:** **Principal Component Analysis (PCA)** will be applied to reduce feature dimensionality, minimize noise, and visualize decision boundaries in lower dimensions.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-178"><a href="#cb3-178"></a></span>
+<span id="cb3-179"><a href="#cb3-179"></a><span class="ss">- </span>**Latent-Space Visualization:** Beyond PCA, t-SNE and UMAP will be applied to project high-dimensional data into 2D latent spaces. These visualizations will reveal natural clustering between normal and attack traffic, and illustrate how different models separate anomalous connections.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-180"><a href="#cb3-180"></a></span>
+<span id="cb3-181"><a href="#cb3-181"></a><span class="ss">- </span>**Feature Selection:** Correlation filtering and low-variance thresholding will be used to eliminate redundant and non-informative predictors.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-182"><a href="#cb3-182"></a></span>
+<span id="cb3-183"><a href="#cb3-183"></a><span class="ss">- </span>**Train/Test Split:** A **stratified 80/20 split** will ensure consistent class ratios between training and testing datasets, preserving representation of all attack families.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-184"><a href="#cb3-184"></a></span>
+<span id="cb3-185"><a href="#cb3-185"></a><span class="ss">- </span>**Cross-Validation:** For supervised learning models, **5-fold cross-validation** will be applied to ensure stable and generalizable results.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-186"><a href="#cb3-186"></a></span>
+<span id="cb3-187"><a href="#cb3-187"></a><span class="ss">- </span>**Class Imbalance Handling:** Severe imbalance in **R2L** and **U2R** attack classes will be mitigated using **SMOTE (Synthetic Minority Oversampling Technique)** and **class-weight adjustments** during model training.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-188"><a href="#cb3-188"></a></span>
+<span id="cb3-189"><a href="#cb3-189"></a><span class="fu">## Model Interpretability</span></span>
+<span id="cb3-190"><a href="#cb3-190"></a></span>
+<span id="cb3-191"><a href="#cb3-191"></a>To ensure transparency and explainability in the results, this project will include interpretability analysis for both supervised and unsupervised models:<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-192"><a href="#cb3-192"></a></span>
+<span id="cb3-193"><a href="#cb3-193"></a><span class="ss">- </span>**Tree-Based Models (Random Forest):** Feature importance plots will be used to identify the most influential network attributes contributing to intrusion detection decisions.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-194"><a href="#cb3-194"></a></span>
+<span id="cb3-195"><a href="#cb3-195"></a><span class="ss">- </span>**SVM and Deep Autoencoders:** The **SHAP (SHapley Additive exPlanations)** framework will be applied to quantify how each input feature affects individual model predictions, highlighting both global and local interpretability.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-196"><a href="#cb3-196"></a></span>
+<span id="cb3-197"><a href="#cb3-197"></a><span class="ss">- </span>**Unsupervised Models (LOF, DBSCAN, Elliptic Envelope):** Model behavior will be interpreted through visualization of **PCA-based decision boundaries**, **cluster separations**, and **anomaly score distributions**.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-198"><a href="#cb3-198"></a></span>
+<span id="cb3-199"><a href="#cb3-199"></a><span class="ss">- </span>**Autoencoder Reconstruction Analysis:** For deep learning models, reconstruction error plots will be examined to understand how effectively normal vs. anomalous traffic patterns are captured and separated.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-200"><a href="#cb3-200"></a></span>
+<span id="cb3-201"><a href="#cb3-201"></a><span class="ss">- </span>**Combined Insights:** Comparing interpretability outputs across models will help evaluate the trade-off between detection accuracy and explainability—an important factor in real-world IDS deployment.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-202"><a href="#cb3-202"></a></span>
+<span id="cb3-203"><a href="#cb3-203"></a><span class="ss">- </span>**Interpretability Trade-Offs:** Comparative analysis will examine the balance between model transparency and detection power. While deep or ensemble methods may offer superior accuracy, their complexity can obscure decision rationale. Simpler statistical models, though less accurate, provide clearer interpretive insights valuable for security analysts. This trade-off will be explicitly discussed in the results and conclusions.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-204"><a href="#cb3-204"></a></span>
+<span id="cb3-205"><a href="#cb3-205"></a><span class="fu">## Evaluation Setup </span></span>
+<span id="cb3-206"><a href="#cb3-206"></a></span>
+<span id="cb3-207"><a href="#cb3-207"></a>The evaluation process will assess the performance, robustness, and reliability of all models through a consistent and structured framework:<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-208"><a href="#cb3-208"></a></span>
+<span id="cb3-209"><a href="#cb3-209"></a><span class="ss">- </span>**Performance Metrics:** Model effectiveness will be quantified using **Precision**, **Recall**, **F1-Score**, **ROC-AUC**, and **Detection Rate** to capture both classification accuracy and anomaly detection strength.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-210"><a href="#cb3-210"></a></span>
+<span id="cb3-211"><a href="#cb3-211"></a><span class="ss">- </span>**Validation Strategy:** Results will be validated through a combination of **stratified 80/20 train–test split** and **5-fold cross-validation** to ensure generalization and mitigate overfitting.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-212"><a href="#cb3-212"></a></span>
+<span id="cb3-213"><a href="#cb3-213"></a><span class="ss">- </span>**Family-Wise and Rare Attack Evaluation:** Each attack family (DoS, Probe, R2L, and U2R) will be evaluated independently, with special attention to rare classes (R2L and U2R). Detection rates, false negatives, and confusion patterns for these low-frequency attacks will reveal how well unsupervised and supervised approaches generalize to scarce attack behaviors.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-214"><a href="#cb3-214"></a></span>
+<span id="cb3-215"><a href="#cb3-215"></a><span class="ss">- </span>**Threshold Optimization (Unsupervised Models):** Anomaly score thresholds (e.g., top 5% or 95th percentile) will be tuned on the training data to balance false positives and false negatives.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-216"><a href="#cb3-216"></a></span>
+<span id="cb3-217"><a href="#cb3-217"></a><span class="ss">- </span>**Baseline Comparison:** Model results will be benchmarked against **published NSL-KDD baselines** and recent IDS studies to contextualize performance improvements.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-218"><a href="#cb3-218"></a></span>
+<span id="cb3-219"><a href="#cb3-219"></a><span class="ss">- </span>**Visualization:** ROC curves, confusion matrices, and precision–recall plots will be used to visually compare detection quality and identify performance trade-offs among methods.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-220"><a href="#cb3-220"></a></span>
+<span id="cb3-221"><a href="#cb3-221"></a><span class="fu">## Questions</span></span>
+<span id="cb3-222"><a href="#cb3-222"></a></span>
+<span id="cb3-223"><a href="#cb3-223"></a><span class="ss">1. </span>How effectively can unsupervised anomaly detection methods identify malicious network traffic when trained only on normal data? <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-224"><a href="#cb3-224"></a></span>
+<span id="cb3-225"><a href="#cb3-225"></a><span class="ss">2. </span>How does the performance of supervised machine learning–based intrusion detection compare with statistical anomaly detection methods in terms of detection accuracy, precision, recall, and interpretability?</span>
+<span id="cb3-226"><a href="#cb3-226"></a></span>
+<span id="cb3-227"><a href="#cb3-227"></a><span class="fu">## Real-World Application Context</span></span>
+<span id="cb3-228"><a href="#cb3-228"></a></span>
+<span id="cb3-229"><a href="#cb3-229"></a>This project models an **enterprise network intrusion detection system (IDS)**.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-230"><a href="#cb3-230"></a>In real-world settings, such systems continuously monitor inbound and outbound connections to detect unusual traffic patterns.</span>
+<span id="cb3-231"><a href="#cb3-231"></a>Findings from this analysis can be directly extended to:<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-232"><a href="#cb3-232"></a><span class="ss">- </span>**Enterprise network monitoring**<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-233"><a href="#cb3-233"></a><span class="ss">- </span>**Cloud service intrusion prevention**<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-234"><a href="#cb3-234"></a><span class="ss">- </span>**IoT network anomaly detection**<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-235"><a href="#cb3-235"></a><span class="ss">- </span>**Streaming data analysis** using similar architectures (e.g., online learning or real-time inference)<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-236"><a href="#cb3-236"></a></span>
+<span id="cb3-237"><a href="#cb3-237"></a><span class="fu">## Dataset Limitations and Justification</span></span>
+<span id="cb3-238"><a href="#cb3-238"></a></span>
+<span id="cb3-239"><a href="#cb3-239"></a>Although the **NSL-KDD dataset** is dated and does not reflect modern encrypted or high-volume network traffic, it remains widely used in academic research because:<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-240"><a href="#cb3-240"></a></span>
+<span id="cb3-241"><a href="#cb3-241"></a><span class="ss">- </span>It contains **well-structured, labeled attack categories**, making it ideal for benchmarking and comparing different algorithms.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-242"><a href="#cb3-242"></a></span>
+<span id="cb3-243"><a href="#cb3-243"></a><span class="ss">- </span>It enables **controlled, reproducible comparisons** between models without introducing data privacy or confidentiality issues.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-244"><a href="#cb3-244"></a></span>
+<span id="cb3-245"><a href="#cb3-245"></a><span class="ss">- </span>It provides **clear ground truth labels**, which are often unavailable in modern or proprietary network traffic datasets.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-246"><a href="#cb3-246"></a></span>
+<span id="cb3-247"><a href="#cb3-247"></a>The goal is to develop and compare generalizable anomaly detection methods, which can later be adapted to more recent or proprietary datasets.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-248"><a href="#cb3-248"></a></span>
+<span id="cb3-249"><a href="#cb3-249"></a><span class="fu">## Reproducibility and Version Control</span></span>
+<span id="cb3-250"><a href="#cb3-250"></a></span>
+<span id="cb3-251"><a href="#cb3-251"></a>To ensure that all results are consistent and reproducible across runs and environments, this project follows strict versioning and organization practices:<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-252"><a href="#cb3-252"></a></span>
+<span id="cb3-253"><a href="#cb3-253"></a><span class="ss">- </span>**Random Seeds:** All random processes (e.g., data splits, model initialization, SMOTE) will use **fixed random seeds** to ensure reproducibility.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-254"><a href="#cb3-254"></a></span>
+<span id="cb3-255"><a href="#cb3-255"></a><span class="ss">- </span>**Repository Organization:** The project repository will follow a clear, modular directory structure to separate data, notebooks, and sources.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-256"><a href="#cb3-256"></a></span>
+<span id="cb3-257"><a href="#cb3-257"></a><span class="in">```text</span></span>
+<span id="cb3-258"><a href="#cb3-258"></a><span class="in">project-root/</span></span>
+<span id="cb3-259"><a href="#cb3-259"></a><span class="in">│</span></span>
+<span id="cb3-260"><a href="#cb3-260"></a><span class="in">├── data/                # Raw and processed datasets</span></span>
+<span id="cb3-261"><a href="#cb3-261"></a><span class="in">├── notebooks/           # Jupyter notebooks for analysis and modeling</span></span>
+<span id="cb3-262"><a href="#cb3-262"></a><span class="in">├── src/                 # Preprocessing and utility code</span></span>
+<span id="cb3-263"><a href="#cb3-263"></a><span class="in">├── requirements.txt     # Python dependencies for environment setup</span></span>
+<span id="cb3-264"><a href="#cb3-264"></a><span class="in">└── README.md            # Project overview and usage instructions</span></span>
+<span id="cb3-265"><a href="#cb3-265"></a><span class="in">```</span></span>
+<span id="cb3-266"><a href="#cb3-266"></a><span class="ss">- </span>Experiment tracking will be implemented using **versioned notebooks and GitHub commits**, ensuring reproducibility.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-267"><a href="#cb3-267"></a><span class="ss">- </span>Dependencies and environment configuration will be captured in a requirements.txt file.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-268"><a href="#cb3-268"></a></span>
+<span id="cb3-269"><a href="#cb3-269"></a><span class="ss">- </span>All visualizations, experiment logs, and performance metrics will be versioned and stored in the repository for transparent result verification.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-270"><a href="#cb3-270"></a></span>
+<span id="cb3-271"><a href="#cb3-271"></a><span class="fu">## Analysis plan</span></span>
+<span id="cb3-272"><a href="#cb3-272"></a></span>
+<span id="cb3-273"><a href="#cb3-273"></a>**Week 1 –** Problem Definition &amp; Data Preparation</span>
+<span id="cb3-274"><a href="#cb3-274"></a>The first week focuses on defining the objectives of anomaly detection within the NSL-KDD dataset. The dataset will be loaded, inspected, and preprocessed to ensure analytical readiness. Tasks include handling missing values, encoding categorical features, and scaling numerical variables.</span>
+<span id="cb3-275"><a href="#cb3-275"></a>Deliverables: Data preparation notebook and summary report.</span>
+<span id="cb3-276"><a href="#cb3-276"></a></span>
+<span id="cb3-277"><a href="#cb3-277"></a>**Week 2 –** Exploratory Data Analysis (EDA)</span>
+<span id="cb3-278"><a href="#cb3-278"></a>This phase aims to understand data distributions, feature correlations, and patterns of normal versus attack traffic. Visualization techniques will be applied to highlight key discriminative features and potential sources of anomaly.</span>
+<span id="cb3-279"><a href="#cb3-279"></a>Deliverables: EDA notebook with visual insights and descriptive summaries.</span>
+<span id="cb3-280"><a href="#cb3-280"></a></span>
+<span id="cb3-281"><a href="#cb3-281"></a>**Week 3 –** Statistical Anomaly Detection Methods</span>
+<span id="cb3-282"><a href="#cb3-282"></a>In this stage, classical statistical methods for anomaly detection will be implemented, including Z-Score, Elliptical Envelope, Local Outlier Factor (LOF), and DBSCAN. Their performance in identifying abnormal network behaviors will be analyzed and compared.</span>
+<span id="cb3-283"><a href="#cb3-283"></a>Deliverables: Statistical anomaly detection notebook and comparative summary.</span>
+<span id="cb3-284"><a href="#cb3-284"></a></span>
+<span id="cb3-285"><a href="#cb3-285"></a>**Week 4 –** Machine Learning–Based Methods</span>
+<span id="cb3-286"><a href="#cb3-286"></a>Modern learning-based detectors will be explored using Isolation Forest, One-Class SVM, and Deep Autoencoders. Models will be tuned for optimal performance, and detection boundaries will be visualized to interpret decision behavior.</span>
+<span id="cb3-287"><a href="#cb3-287"></a>Deliverables: ML anomaly detection notebook and evaluation metrics.</span>
+<span id="cb3-288"><a href="#cb3-288"></a></span>
+<span id="cb3-289"><a href="#cb3-289"></a>**Week 5 –** Model Evaluation and Comparison</span>
+<span id="cb3-290"><a href="#cb3-290"></a>All implemented methods will be assessed using standard performance metrics such as Precision, Recall, F1-score, ROC-AUC, and Detection Rate. Comparative analyses and ablation studies will be performed to evaluate robustness and generalization.</span>
+<span id="cb3-291"><a href="#cb3-291"></a>Deliverables: Evaluation notebook and performance report.</span>
+<span id="cb3-292"><a href="#cb3-292"></a></span>
+<span id="cb3-293"><a href="#cb3-293"></a>**Week 6 –** Final Analysis &amp; Reporting</span>
+<span id="cb3-294"><a href="#cb3-294"></a>The final week synthesizes results into a comprehensive assessment of the effectiveness of different anomaly detection techniques. The findings will discuss practical implications, advantages, and limitations of each approach in real-world intrusion detection scenarios.</span>
+<span id="cb3-295"><a href="#cb3-295"></a>Additionally, a **reflection phase** will visualize anomaly scores and latent embeddings (via PCA, t-SNE, UMAP) to assess separability between normal and attack samples. The final report will include a **comparative interpretability reflection**, discussing how the transparency–accuracy balance affects IDS deployment decisions.<span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb3-296"><a href="#cb3-296"></a>Deliverables: Final project report and presentation slides.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

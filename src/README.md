@@ -4,17 +4,6 @@ This folder contains all **preprocessing** and **utility** scripts used in the p
 **“Anomaly Detection in Network Traffic Using the NSL-KDD Dataset.”**
 
 ```text
-src/
-├── eval.py
-├── explain.py
-├── io.py
-├── models.py
-├── plots.py
-├── preps.py
-├── unsupervised.py
-├── thresholds.py
-└── utils.py
-
 ### Module Descriptions
 
 - **eval.py** — Evaluation utilities: metrics, confusion matrices, ROC/F1 reporting, comparison helpers.  
@@ -26,3 +15,16 @@ src/
 - **unsupervised.py** — Unsupervised anomaly detectors (Z-score, Elliptic Envelope, LOF, Isolation Forest, Mahalanobis).  
 - **thresholds.py** — Thresholding logic for anomaly scoring, chi-square cutoffs, and scoring transformations.  
 - **utils.py** — General utilities, helper functions, logging, and miscellaneous shared functionality.  
+
+src/
+├── eval.py
+├── explain.py
+├── io.py
+├── models.py
+├── plots.py
+├── preps.py
+├── unsupervised.py
+├── thresholds.py
+└── utils.py
+
+

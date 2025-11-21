@@ -3,7 +3,6 @@
 This folder contains all **preprocessing** and **utility** scripts used in the project  
 **“Anomaly Detection in Network Traffic Using the NSL-KDD Dataset.”**
 
-```text
 ### Module Descriptions
 
 - **eval.py** — Evaluation utilities: metrics, confusion matrices, ROC/F1 reporting, comparison helpers.  
@@ -16,6 +15,7 @@ This folder contains all **preprocessing** and **utility** scripts used in the p
 - **thresholds.py** — Thresholding logic for anomaly scoring, chi-square cutoffs, and scoring transformations.  
 - **utils.py** — General utilities, helper functions, logging, and miscellaneous shared functionality.  
 
+```text
 src/
 ├── eval.py
 ├── explain.py

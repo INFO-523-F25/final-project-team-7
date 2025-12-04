@@ -74,7 +74,7 @@ Final_Project/
 │
 ├── requirements.txt
 └── README.md
-'''
+```
 
 ## Weekly Plan of Attack
 

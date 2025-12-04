@@ -74,4 +74,19 @@ All notebooks are designed to be fully reproducible and rely on shared utilities
 ---
 
 ## 📦 Folder Conventions
-
+```text
+notebooks/
+│
+├── figures/
+│ ├── week02/
+│ ├── week03/
+│ ├── week04/
+│ └── week06/
+│
+├── week01_data_prep.ipynb
+├── week02_eda.ipynb
+├── week03_anomaly_detection.ipynb
+├── week04_ml_models.ipynb
+├── week05_eval.ipynb
+└── week06_report_explain.ipynb
+```

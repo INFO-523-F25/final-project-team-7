@@ -72,6 +72,7 @@ Final_Project/
 │   ├── week_04
 │   ├── week_05
 │
+├── writeup.ipynb              # write-up report
 ├── requirements.txt
 └── README.md
 ```

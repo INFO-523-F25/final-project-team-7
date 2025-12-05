@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Week 04 — Classical ML Models – Final Project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-ffa9a6279353761231ec249df0a7fdd3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-24772959a0e306aba8d7698078628ce7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-ffa9a6279353761231ec249df0a7fdd3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Final Project</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Project</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../proposal.html"> 
+<span class="menu-text">Proposal</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../presentation.html"> 
+<span class="menu-text">Presentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/INFO-523-SU24/final-project"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#unsupervised-semi-supervised-models" id="toc-unsupervised-semi-supervised-models" class="nav-link active" data-scroll-target="#unsupervised-semi-supervised-models">1. Unsupervised / Semi-supervised models</a>
+  <ul class="collapse">
+  <li><a href="#isolation-forest" id="toc-isolation-forest" class="nav-link" data-scroll-target="#isolation-forest">1.1 Isolation Forest</a></li>
+  <li><a href="#one-class-svm-rbf" id="toc-one-class-svm-rbf" class="nav-link" data-scroll-target="#one-class-svm-rbf">1.2 One-Class SVM (RBF)</a></li>
+  <li><a href="#deep-autoencoder" id="toc-deep-autoencoder" class="nav-link" data-scroll-target="#deep-autoencoder">1.3 Deep Autoencoder</a></li>
+  </ul></li>
+  <li><a href="#supervised-models-random-forest-and-svm-rbf" id="toc-supervised-models-random-forest-and-svm-rbf" class="nav-link" data-scroll-target="#supervised-models-random-forest-and-svm-rbf">2. Supervised models: Random Forest and SVM (RBF)</a>
+  <ul class="collapse">
+  <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">2.1 Random Forest</a></li>
+  <li><a href="#svm-rbf" id="toc-svm-rbf" class="nav-link" data-scroll-target="#svm-rbf">2.2 SVM-RBF</a></li>
+  </ul></li>
+  <li><a href="#imbalance-handling-class_weight-vs-smote-for-rare-classes-r2l-u2r-analogues" id="toc-imbalance-handling-class_weight-vs-smote-for-rare-classes-r2l-u2r-analogues" class="nav-link" data-scroll-target="#imbalance-handling-class_weight-vs-smote-for-rare-classes-r2l-u2r-analogues">3. Imbalance handling: class_weight vs SMOTE for rare classes (R2L / U2R analogues)</a>
+  <ul class="collapse">
+  <li><a href="#baseline-class_weight-only" id="toc-baseline-class_weight-only" class="nav-link" data-scroll-target="#baseline-class_weight-only">3.1 Baseline: class_weight only</a></li>
+  <li><a href="#smote-random-forest-svm-rbf-train-only" id="toc-smote-random-forest-svm-rbf-train-only" class="nav-link" data-scroll-target="#smote-random-forest-svm-rbf-train-only">3.2 SMOTE + Random Forest / SVM-RBF (train only)</a></li>
+  <li><a href="#svm-rbf-baseline-fast-subset" id="toc-svm-rbf-baseline-fast-subset" class="nav-link" data-scroll-target="#svm-rbf-baseline-fast-subset">4. SVM-RBF (Baseline, Fast Subset)</a></li>
+  <li><a href="#svm-rbf-with-smote-oversampling" id="toc-svm-rbf-with-smote-oversampling" class="nav-link" data-scroll-target="#svm-rbf-with-smote-oversampling">5. SVM-RBF with SMOTE Oversampling</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Week 04 — Classical ML Models</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<ul>
+<li><strong>Unsupervised / semi-supervised</strong>
+<ul>
+<li>Isolation Forest (tune <code>n_estimators</code>, <code>max_samples</code>, <code>contamination</code>)</li>
+<li>One-Class SVM (RBF kernel; tune <code>nu</code>, <code>gamma</code>; <strong>scaled inputs</strong>)</li>
+<li>Deep Autoencoder (MSE reconstruction loss, <strong>early stopping</strong>, threshold on reconstruction error)</li>
+</ul></li>
+<li><strong>Supervised</strong>
+<ul>
+<li>Random Forest (class-weight balanced; tune <code>n_estimators</code>, <code>max_depth</code>)</li>
+<li>SVM (RBF kernel, class-weight balanced; tune <code>C</code>, <code>gamma</code>)</li>
+</ul></li>
+<li><strong>Imbalance handling</strong>
+<ul>
+<li>Compare <strong>class_weight</strong> vs <strong>SMOTE</strong> (train only) for rare classes (R2L / U2R analogues)</li>
+<li>Keep a clean baseline that uses <strong>only class_weight</strong>.</li>
+</ul></li>
+</ul>
+<p>Helper codes in <code>src/models.py</code> and <code>src/eval.py</code>.</p>
+<div id="5031d951-ce44-44e1-9b43-898e353a9f98" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ignore"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    message<span class="op">=</span><span class="st">".*covariance matrix associated to your dataset is not full rank.*"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="edaa5253-9d21-4fb4-a7a6-1de511ad9bab" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os, sys</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sys.path.append(os.path.abspath(<span class="st">".."</span>))  <span class="co"># from notebooks/ to project root</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.utils <span class="im">import</span> set_global_seed, Paths</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.models <span class="im">import</span> make_fast_oneclass_svm</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>set_global_seed()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Import OK."</span>, Paths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Import OK. &lt;class 'src.utils.Paths'&gt;</code></pre>
+</div>
+</div>
+<div id="750d6d31" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os, sys</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>this_dir <span class="op">=</span> Path.cwd()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> this_dir.parent <span class="cf">if</span> this_dir.name <span class="op">==</span> <span class="st">"notebooks"</span> <span class="cf">else</span> this_dir</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sys.path.append(<span class="bu">str</span>(project_root))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.utils <span class="im">import</span> Paths, set_global_seed</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.models <span class="im">import</span> (</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    make_isolation_forest_grid,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    make_oneclass_svm_grid,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    make_rf_classifier_grid,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    make_svm_rbf_grid,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    build_deep_autoencoder,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.<span class="bu">eval</span> <span class="im">import</span> (</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    plot_confusion,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    classification_summary,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    binary_roc_pr_curves,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV, train_test_split</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>set_global_seed(<span class="dv">42</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> Paths().ensure()</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Project root:"</span>, project_root)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Using paths:"</span>, paths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Project root: C:\Users\mehra\Final_Project
+Using paths: Paths(root=WindowsPath('C:/Users/mehra/Final_Project'), data_raw=WindowsPath('C:/Users/mehra/Final_Project/data/raw'), data_proc=WindowsPath('C:/Users/mehra/Final_Project/data/processed'), figs=WindowsPath('C:/Users/mehra/Final_Project/notebooks/figures'), artifacts=WindowsPath('C:/Users/mehra/Final_Project/notebooks/artifacts'))</code></pre>
+</div>
+</div>
+<div id="e59561dc" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load processed train/test arrays from Week 01.</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>X_train_path <span class="op">=</span> paths.data_proc <span class="op">/</span> <span class="st">"X_train.npy"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>X_test_path <span class="op">=</span> paths.data_proc <span class="op">/</span> <span class="st">"X_test.npy"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>y_train_path <span class="op">=</span> paths.data_proc <span class="op">/</span> <span class="st">"y_train.npy"</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>y_test_path <span class="op">=</span> paths.data_proc <span class="op">/</span> <span class="st">"y_test.npy"</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> np.load(X_train_path)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> np.load(X_test_path)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> np.load(y_train_path)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>y_test <span class="op">=</span> np.load(y_test_path)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"X_train:"</span>, X_train.shape, <span class="st">"X_test:"</span>, X_test.shape)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y_train classes:"</span>, Counter(y_train))</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y_test  classes:"</span>, Counter(y_test))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>X_train: (395216, 115) X_test: (98805, 115)
+y_train classes: Counter({0: 313166, 4: 77822, 1: 3285, 2: 901, 3: 42})
+y_test  classes: Counter({0: 78292, 4: 19456, 1: 822, 2: 225, 3: 10})</code></pre>
+</div>
+</div>
+<p>To evaluate unsupervised detectors, we convert the multi-class labels into a <strong>binary</strong> label:</p>
+<ul>
+<li>The <strong>majority class</strong> in <code>y_train</code> is treated as <em>normal</em> (label = 0)</li>
+<li>All other classes are treated as <em>attack/anomaly</em> (label = 1)</li>
+</ul>
+<p>This matches the standard NSL-KDD setup where attacks are rare compared to normal traffic, but it does <strong>not</strong> assume any particular encoding of labels.</p>
+<div id="5ea6f108" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build binary labels for anomaly detection (0 = normal, 1 = attack).</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>class_counts <span class="op">=</span> Counter(y_train)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>normal_label <span class="op">=</span> <span class="bu">max</span>(class_counts, key<span class="op">=</span>class_counts.get)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Treating label"</span>, normal_label, <span class="st">"as NORMAL (0). All others = ATTACK (1)."</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> to_binary(y, normal):</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.where(y <span class="op">==</span> normal, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>y_train_bin <span class="op">=</span> to_binary(y_train, normal_label)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>y_test_bin <span class="op">=</span> to_binary(y_test, normal_label)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Binary train counts:"</span>, Counter(y_train_bin))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Binary test  counts:"</span>, Counter(y_test_bin))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Treating label 0 as NORMAL (0). All others = ATTACK (1).
+Binary train counts: Counter({0: 313166, 1: 82050})
+Binary test  counts: Counter({0: 78292, 1: 20513})</code></pre>
+</div>
+</div>
+<section id="unsupervised-semi-supervised-models" class="level2">
+<h2 class="anchored" data-anchor-id="unsupervised-semi-supervised-models">1. Unsupervised / Semi-supervised models</h2>
+<section id="isolation-forest" class="level3">
+<h3 class="anchored" data-anchor-id="isolation-forest">1.1 Isolation Forest</h3>
+<div id="c023986d-13e8-4453-a4fb-a8c051c8c838" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> iso_f1_scorer(estimator, X, y_true):</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Convert IsolationForest predictions {1, -1} into {0, 1} and compute F1.</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    y_raw <span class="op">=</span> estimator.predict(X)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> (y_raw <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>).astype(<span class="bu">int</span>)  <span class="co"># -1 = anomaly → 1</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> f1_score(y_true, y_pred, zero_division<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="671eee28-989d-4da9-8ba6-cd80897fd6d3" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.models <span class="im">import</span> make_isolation_forest_grid</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>iso_spec <span class="op">=</span> make_isolation_forest_grid()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>iso_gs <span class="op">=</span> GridSearchCV(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    estimator<span class="op">=</span>iso_spec.model,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    param_grid<span class="op">=</span>iso_spec.param_grid,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span>iso_f1_scorer,</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>iso_gs.fit(X_train, y_train_bin)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best params (Isolation Forest):"</span>, iso_gs.best_params_)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best F1 (train CV):"</span>, iso_gs.best_score_)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fitting 3 folds for each of 18 candidates, totalling 54 fits
+Best params (Isolation Forest): {'contamination': 0.1, 'max_samples': 0.5, 'n_estimators': 200}
+Best F1 (train CV): 0.5217237922691421</code></pre>
+</div>
+</div>
+<div id="4c03d9ea" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate Isolation Forest on the held-out test set.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>best_iso <span class="op">=</span> iso_gs.best_estimator_</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>pred_iso <span class="op">=</span> best_iso.predict(X_test)  <span class="co"># 1 = inlier, -1 = outlier</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>y_pred_iso <span class="op">=</span> np.where(pred_iso <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Isolation Forest F1 (test, binary):"</span>, f1_score(y_test_bin, y_pred_iso))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test_bin, y_pred_iso, labels<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>], title<span class="op">=</span><span class="st">"Isolation Forest (binary)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Isolation Forest F1 (test, binary): 0.4988470913762435</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-9-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="one-class-svm-rbf" class="level3">
+<h3 class="anchored" data-anchor-id="one-class-svm-rbf">1.2 One-Class SVM (RBF)</h3>
+<div id="ef5c8d7a" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># OC-SVM (RBF)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ocsvm <span class="op">=</span> make_fast_oneclass_svm()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Train on normal-only data</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>mask_normal <span class="op">=</span> (y_train_bin <span class="op">==</span> <span class="dv">0</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>X_train_normal <span class="op">=</span> X_train[mask_normal]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ocsvm.fit(X_train_normal)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>pred <span class="op">=</span> ocsvm.predict(X_test)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>y_pred_ocsvm <span class="op">=</span> (pred <span class="op">==</span> <span class="op">-</span><span class="dv">1</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test_bin, y_pred_ocsvm, labels<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>], title<span class="op">=</span><span class="st">"OC-SVM"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="deep-autoencoder" class="level3">
+<h3 class="anchored" data-anchor-id="deep-autoencoder">1.3 Deep Autoencoder</h3>
+<div id="9157fad1" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">### 1.3 Deep Autoencoder — Chapter_2 architecture on Week04 features</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow <span class="im">import</span> keras</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> f1_score</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Use the same X_train / X_test that you loaded at the top of Week04</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>input_dim <span class="op">=</span> X_train.shape[<span class="dv">1</span>]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Autoencoder input_dim:"</span>, input_dim)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Architecture matching the screenshot:  input_dim → 30 → 16 → 8 → 16 → 30 → input_dim</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>input_layer <span class="op">=</span> keras.Input(shape<span class="op">=</span>(input_dim,))</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>encoded <span class="op">=</span> layers.Dense(<span class="dv">30</span>, activation<span class="op">=</span><span class="st">"relu"</span>)(input_layer)</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>encoded <span class="op">=</span> layers.Dense(<span class="dv">16</span>, activation<span class="op">=</span><span class="st">"relu"</span>)(encoded)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>encoded <span class="op">=</span> layers.Dense(<span class="dv">8</span>,  activation<span class="op">=</span><span class="st">"relu"</span>)(encoded)</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>decoded <span class="op">=</span> layers.Dense(<span class="dv">16</span>, activation<span class="op">=</span><span class="st">"relu"</span>)(encoded)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>decoded <span class="op">=</span> layers.Dense(<span class="dv">30</span>, activation<span class="op">=</span><span class="st">"relu"</span>)(decoded)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>decoded <span class="op">=</span> layers.Dense(input_dim, activation<span class="op">=</span><span class="st">"linear"</span>)(decoded)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>autoencoder <span class="op">=</span> keras.Model(input_layer, decoded, name<span class="op">=</span><span class="st">"deep_autoencoder_ch2"</span>)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>autoencoder.<span class="bu">compile</span>(</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    optimizer<span class="op">=</span><span class="st">"adam"</span>,</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    loss<span class="op">=</span><span class="st">"mean_squared_error"</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>autoencoder.summary()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Autoencoder input_dim: 115</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "deep_autoencoder_ch2"</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                    </span>┃<span style="font-weight: bold"> Output Shape           </span>┃<span style="font-weight: bold">       Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ input_layer (<span style="color: #0087ff; text-decoration-color: #0087ff">InputLayer</span>)        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">115</span>)            │             <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                   │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">30</span>)             │         <span style="color: #00af00; text-decoration-color: #00af00">3,480</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)             │           <span style="color: #00af00; text-decoration-color: #00af00">496</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">8</span>)              │           <span style="color: #00af00; text-decoration-color: #00af00">136</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_3 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">16</span>)             │           <span style="color: #00af00; text-decoration-color: #00af00">144</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_4 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">30</span>)             │           <span style="color: #00af00; text-decoration-color: #00af00">510</span> │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_5 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                 │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">115</span>)            │         <span style="color: #00af00; text-decoration-color: #00af00">3,565</span> │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">8,331</span> (32.54 KB)
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">8,331</span> (32.54 KB)
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+</div>
+</div>
+<div id="8031bd62-2386-495d-9a02-407887db35e2" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure numeric float dtype</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>X_train_ae <span class="op">=</span> X_train.astype(<span class="st">"float32"</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>X_test_ae  <span class="op">=</span> X_test.astype(<span class="st">"float32"</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> autoencoder.fit(</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    X_train_ae,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    X_train_ae,        <span class="co"># reconstruction target</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    epochs<span class="op">=</span><span class="dv">10</span>,         <span class="co"># like in Chapter_2 screenshot</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">256</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    shuffle<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    validation_split<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre>Epoch 1/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">5s</span> 2ms/step - loss: 0.1647 - val_loss: 0.0458
+
+Epoch 2/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.1108 - val_loss: 0.0363
+
+Epoch 3/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">4s</span> 3ms/step - loss: 0.0769 - val_loss: 0.0338
+
+Epoch 4/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0594 - val_loss: 0.0386
+
+Epoch 5/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0547 - val_loss: 0.0264
+
+Epoch 6/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0655 - val_loss: 0.0216
+
+Epoch 7/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">4s</span> 3ms/step - loss: 0.0583 - val_loss: 0.0175
+
+Epoch 8/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0544 - val_loss: 0.0146
+
+Epoch 9/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0278 - val_loss: 0.0145
+
+Epoch 10/10
+
+<span class="ansi-bold">1390/1390</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">3s</span> 2ms/step - loss: 0.0386 - val_loss: 0.0149
+</pre>
+</div>
+</div>
+</div>
+<div id="ea7c6893" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reconstruction error on training + test</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>recon_train <span class="op">=</span> autoencoder.predict(X_train, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>recon_test <span class="op">=</span> autoencoder.predict(X_test, verbose<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>train_err <span class="op">=</span> np.mean((X_train <span class="op">-</span> recon_train) <span class="op">**</span> <span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>test_err <span class="op">=</span> np.mean((X_test <span class="op">-</span> recon_test) <span class="op">**</span> <span class="dv">2</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose threshold as a high percentile of *training* error</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>threshold <span class="op">=</span> np.percentile(train_err, <span class="dv">99</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Autoencoder threshold (99th percentile of train error):"</span>, threshold)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>y_pred_ae <span class="op">=</span> (test_err <span class="op">&gt;=</span> threshold).astype(<span class="bu">int</span>)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Autoencoder F1 (test, binary):"</span>, f1_score(y_test_bin, y_pred_ae))</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test_bin, y_pred_ae, labels<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>], title<span class="op">=</span><span class="st">"Autoencoder"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Autoencoder threshold (99th percentile of train error): 0.1440299195070224
+Autoencoder F1 (test, binary): 0.08864985163204747</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-13-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="596d839f" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ROC / PR curves for the autoencoder scores</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>binary_roc_pr_curves(y_test_bin, test_err, pos_label<span class="op">=</span><span class="dv">1</span>, title_prefix<span class="op">=</span><span class="st">"Autoencoder "</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>(&lt;Figure size 1000x400 with 2 Axes&gt;,
+ array([&lt;Axes: title={'center': 'Autoencoder ROC (AUC=0.982)'}, xlabel='False positive rate', ylabel='True positive rate'&gt;,
+        &lt;Axes: title={'center': 'Autoencoder Precision-Recall'}, xlabel='Recall', ylabel='Precision'&gt;],
+       dtype=object))</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-14-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="supervised-models-random-forest-and-svm-rbf" class="level2">
+<h2 class="anchored" data-anchor-id="supervised-models-random-forest-and-svm-rbf">2. Supervised models: Random Forest and SVM (RBF)</h2>
+<section id="random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest">2.1 Random Forest</h3>
+<p>Use the <strong>full multi-class labels</strong> (<code>y_train</code>, <code>y_test</code>) and train:</p>
+<ul>
+<li>Random Forest (class_weight=“balanced”; tune <code>n_estimators</code>, <code>max_depth</code>)</li>
+<li>SVM with RBF kernel (class_weight=“balanced”; tune <code>C</code>, <code>gamma</code>)</li>
+</ul>
+<p>This gives a supervised baseline to compare against the unsupervised / semi-supervised detectors.</p>
+<div id="8eb0a55a" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>rf_spec <span class="op">=</span> make_rf_classifier_grid()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>rf_gs <span class="op">=</span> GridSearchCV(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    estimator<span class="op">=</span>rf_spec.model,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    param_grid<span class="op">=</span>rf_spec.param_grid,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    scoring<span class="op">=</span><span class="st">"f1_weighted"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    verbose<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>rf_gs.fit(X_train, y_train)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random Forest best params:"</span>, rf_gs.best_params_)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random Forest best CV f1_weighted:"</span>, rf_gs.best_score_)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fitting 3 folds for each of 9 candidates, totalling 27 fits
+Random Forest best params: {'max_depth': 20, 'n_estimators': 400}
+Random Forest best CV f1_weighted: 0.9997615589652838</code></pre>
+</div>
+</div>
+<div id="0ba50723" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>best_rf <span class="op">=</span> rf_gs.best_estimator_</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>y_pred_rf <span class="op">=</span> best_rf.predict(X_test)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>rf_report <span class="op">=</span> classification_summary(y_test, y_pred_rf, print_report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test, y_pred_rf, title<span class="op">=</span><span class="st">"Random Forest"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     78292
+           1       1.00      0.99      1.00       822
+           2       1.00      0.98      0.99       225
+           3       0.82      0.90      0.86        10
+           4       1.00      1.00      1.00     19456
+
+    accuracy                           1.00     98805
+   macro avg       0.96      0.97      0.97     98805
+weighted avg       1.00      1.00      1.00     98805
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-16-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="svm-rbf" class="level3">
+<h3 class="anchored" data-anchor-id="svm-rbf">2.2 SVM-RBF</h3>
+<div id="7b2b9459" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># SVM-RBF</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>svm_fast <span class="op">=</span> Pipeline([</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"scaler"</span>, StandardScaler()),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"svc"</span>, SVC(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        kernel<span class="op">=</span><span class="st">"rbf"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        class_weight<span class="op">=</span><span class="st">"balanced"</span>,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        C<span class="op">=</span><span class="dv">10</span>,          <span class="co"># reasonable value</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        gamma<span class="op">=</span><span class="st">"scale"</span>  <span class="co"># reasonable value</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>svm_fast.fit(X_train, y_train)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>y_pred_svm <span class="op">=</span> svm_fast.predict(X_test)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>classification_summary(y_test, y_pred_svm, print_report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test, y_pred_svm, title<span class="op">=</span><span class="st">"SVM-RBF"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     78292
+           1       0.97      0.98      0.97       822
+           2       0.72      0.98      0.83       225
+           3       0.73      0.80      0.76        10
+           4       1.00      0.99      1.00     19456
+
+    accuracy                           1.00     98805
+   macro avg       0.88      0.95      0.91     98805
+weighted avg       1.00      1.00      1.00     98805
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-17-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="imbalance-handling-class_weight-vs-smote-for-rare-classes-r2l-u2r-analogues" class="level2">
+<h2 class="anchored" data-anchor-id="imbalance-handling-class_weight-vs-smote-for-rare-classes-r2l-u2r-analogues">3. Imbalance handling: class_weight vs SMOTE for rare classes (R2L / U2R analogues)</h2>
+<p>NSL-KDD includes very rare <strong>R2L</strong> and <strong>U2R</strong> attack families. Instead of assuming we already know which integer labels correspond to these families, we follow a <strong>data-driven</strong> approach:</p>
+<ul>
+<li>Identify the <strong>two rarest classes</strong> in <code>y_train</code>.</li>
+<li>Treat them as “R2L/U2R-like” minority classes.</li>
+<li>Compare:
+<ol type="1">
+<li>Baseline models using only <code>class_weight="balanced"</code></li>
+<li>Models trained on <strong>SMOTE-resampled</strong> data (train only), focusing on those rare classes.</li>
+</ol></li>
+</ul>
+<div id="0cee1bf9" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> imblearn.over_sampling <span class="im">import</span> SMOTE</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the two rarest classes</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>class_counts_full <span class="op">=</span> Counter(y_train)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>classes_sorted <span class="op">=</span> <span class="bu">sorted</span>(class_counts_full.items(), key<span class="op">=</span><span class="kw">lambda</span> kv: kv[<span class="dv">1</span>])</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>minority_classes <span class="op">=</span> [c <span class="cf">for</span> c, _ <span class="kw">in</span> classes_sorted[:<span class="dv">2</span>]]</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Minority classes (treated as R2L/U2R-like):"</span>, minority_classes)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class counts:"</span>, class_counts_full)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Minority classes (treated as R2L/U2R-like): [3, 2]
+Class counts: Counter({0: 313166, 4: 77822, 1: 3285, 2: 901, 3: 42})</code></pre>
+</div>
+</div>
+<div id="15293e57" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluate_subset(classes_subset, y_true, y_pred):</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    mask <span class="op">=</span> np.isin(y_true, classes_subset)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    y_true_sub <span class="op">=</span> y_true[mask]</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    y_pred_sub <span class="op">=</span> y_pred[mask]</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Subset size:"</span>, y_true_sub.shape[<span class="dv">0</span>])</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> classification_summary(y_true_sub, y_pred_sub, print_report<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="baseline-class_weight-only" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-class_weight-only">3.1 Baseline: class_weight only</h3>
+<div id="04e3a9da" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Random Forest (class_weight baseline) — minority classes"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> evaluate_subset(minority_classes, y_test, y_pred_rf)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">SVM-RBF (class_weight baseline) — minority classes"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> evaluate_subset(minority_classes, y_test, y_pred_svm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random Forest (class_weight baseline) — minority classes
+Subset size: 235
+              precision    recall  f1-score   support
+
+           2       1.00      0.98      0.99       225
+           3       0.90      0.90      0.90        10
+           4       0.00      0.00      0.00         0
+
+    accuracy                           0.97       235
+   macro avg       0.63      0.63      0.63       235
+weighted avg       1.00      0.97      0.98       235
+
+
+SVM-RBF (class_weight baseline) — minority classes
+Subset size: 235
+              precision    recall  f1-score   support
+
+           2       1.00      0.98      0.99       225
+           3       1.00      0.80      0.89        10
+           4       0.00      0.00      0.00         0
+
+    accuracy                           0.97       235
+   macro avg       0.67      0.59      0.63       235
+weighted avg       1.00      0.97      0.98       235
+</code></pre>
+</div>
+</div>
+</section>
+<section id="smote-random-forest-svm-rbf-train-only" class="level3">
+<h3 class="anchored" data-anchor-id="smote-random-forest-svm-rbf-train-only">3.2 SMOTE + Random Forest / SVM-RBF (train only)</h3>
+<div id="f46e5ae9" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SMOTE strategy: upsample only the identified minority classes</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>desired <span class="op">=</span> <span class="bu">max</span>(class_counts_full.values())</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>sampling_strategy <span class="op">=</span> {cls: desired <span class="cf">for</span> cls <span class="kw">in</span> minority_classes}</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SMOTE sampling strategy:"</span>, sampling_strategy)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>smote <span class="op">=</span> SMOTE(sampling_strategy<span class="op">=</span>sampling_strategy, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>X_train_sm, y_train_sm <span class="op">=</span> smote.fit_resample(X_train, y_train)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"After SMOTE counts:"</span>, Counter(y_train_sm))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>SMOTE sampling strategy: {3: 313166, 2: 313166}
+After SMOTE counts: Counter({0: 313166, 2: 313166, 3: 313166, 4: 77822, 1: 3285})</code></pre>
+</div>
+</div>
+<div id="f61224eb" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reuse best params from the *baseline* RF grid search</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Baseline RF best params:"</span>, rf_gs.best_params_)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>rf_sm <span class="op">=</span> RandomForestClassifier(</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    n_estimators<span class="op">=</span>rf_gs.best_params_[<span class="st">"n_estimators"</span>],</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    max_depth<span class="op">=</span>rf_gs.best_params_[<span class="st">"max_depth"</span>],</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    n_jobs<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    class_weight<span class="op">=</span><span class="st">"balanced"</span>,    <span class="co"># you can also set this to None, since SMOTE already balances</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit on SMOTE-resampled data (single fit, much faster than GridSearchCV)</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>rf_sm.fit(X_train_sm, y_train_sm)</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>y_pred_rf_sm <span class="op">=</span> rf_sm.predict(X_test)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Random Forest + SMOTE — full test report"</span>)</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> classification_summary(y_test, y_pred_rf_sm, print_report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Random Forest + SMOTE — minority classes"</span>)</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> evaluate_subset(minority_classes, y_test, y_pred_rf_sm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Baseline RF best params: {'max_depth': 20, 'n_estimators': 400}
+
+Random Forest + SMOTE — full test report
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     78292
+           1       1.00      0.99      1.00       822
+           2       0.99      0.98      0.99       225
+           3       0.75      0.90      0.82        10
+           4       1.00      1.00      1.00     19456
+
+    accuracy                           1.00     98805
+   macro avg       0.95      0.98      0.96     98805
+weighted avg       1.00      1.00      1.00     98805
+
+
+Random Forest + SMOTE — minority classes
+Subset size: 235
+              precision    recall  f1-score   support
+
+           2       1.00      0.98      0.99       225
+           3       0.82      0.90      0.86        10
+           4       0.00      0.00      0.00         0
+
+    accuracy                           0.98       235
+   macro avg       0.60      0.63      0.62       235
+weighted avg       0.99      0.98      0.98       235
+</code></pre>
+</div>
+</div>
+</section>
+<section id="svm-rbf-baseline-fast-subset" class="level3">
+<h3 class="anchored" data-anchor-id="svm-rbf-baseline-fast-subset">4. SVM-RBF (Baseline, Fast Subset)</h3>
+<div id="1949d4cb-07de-43f4-9118-20b82af314ca" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_svm_subset(X, y, minority_classes, max_samples<span class="op">=</span><span class="dv">5000</span>, random_state<span class="op">=</span><span class="dv">42</span>):</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Build a smaller train set for SVM:</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># - Keep ALL samples from minority_classes</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># - Subsample majority classes so total ~ max_samples</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    rng <span class="op">=</span> np.random.RandomState(random_state)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.asarray(y)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Indices for minority and majority</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    mask_min <span class="op">=</span> np.isin(y, minority_classes)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    idx_min <span class="op">=</span> np.where(mask_min)[<span class="dv">0</span>]</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    idx_maj <span class="op">=</span> np.where(<span class="op">~</span>mask_min)[<span class="dv">0</span>]</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Always keep all minority samples</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    keep_idx <span class="op">=</span> <span class="bu">list</span>(idx_min)</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Remaining budget for majority</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>    remaining <span class="op">=</span> <span class="bu">max</span>(<span class="dv">0</span>, max_samples <span class="op">-</span> <span class="bu">len</span>(idx_min))</span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> remaining <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> <span class="bu">len</span>(idx_maj) <span class="op">&gt;</span> remaining:</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>        subsampled_maj <span class="op">=</span> rng.choice(idx_maj, size<span class="op">=</span>remaining, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>        subsampled_maj <span class="op">=</span> idx_maj</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>    keep_idx.extend(subsampled_maj)</span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>    keep_idx <span class="op">=</span> np.array(keep_idx)</span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>    X_small <span class="op">=</span> X[keep_idx]</span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>    y_small <span class="op">=</span> y[keep_idx]</span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"SVM subset size:"</span>, X_small.shape, <span class="st">"class counts:"</span>, Counter(y_small))</span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X_small, y_small</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="svm-rbf-with-smote-oversampling" class="level3">
+<h3 class="anchored" data-anchor-id="svm-rbf-with-smote-oversampling">5. SVM-RBF with SMOTE Oversampling</h3>
+<div id="0038aa7e" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.models <span class="im">import</span> make_fast_svm_rbf</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> imblearn.over_sampling <span class="im">import</span> SMOTE</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Identify minority classes </span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>class_counts_full <span class="op">=</span> Counter(y_train)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>classes_sorted <span class="op">=</span> <span class="bu">sorted</span>(class_counts_full.items(), key<span class="op">=</span><span class="kw">lambda</span> kv: kv[<span class="dv">1</span>])</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>minority_classes <span class="op">=</span> [c <span class="cf">for</span> c, _ <span class="kw">in</span> classes_sorted[:<span class="dv">2</span>]]</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Minority classes:"</span>, minority_classes)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Class counts:"</span>, class_counts_full)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Build smaller subset for SVM baseline (no SMOTE)</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>X_train_svm, y_train_svm <span class="op">=</span> build_svm_subset(</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    X_train, y_train,</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    minority_classes<span class="op">=</span>minority_classes,</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>    max_samples<span class="op">=</span><span class="dv">2000</span>,        <span class="co"># you can drop to 3000 or 2000 if still slow</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) SMOTE on FULL train, then subset for SVM</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>desired <span class="op">=</span> <span class="bu">max</span>(class_counts_full.values())</span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>sampling_strategy <span class="op">=</span> {cls: desired <span class="cf">for</span> cls <span class="kw">in</span> minority_classes}</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"SMOTE sampling strategy:"</span>, sampling_strategy)</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>smote <span class="op">=</span> SMOTE(sampling_strategy<span class="op">=</span>sampling_strategy, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>X_train_sm_full, y_train_sm_full <span class="op">=</span> smote.fit_resample(X_train, y_train)</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"After SMOTE (full):"</span>, Counter(y_train_sm_full))</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the SMOTE-resampled set for SVM</span></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>X_train_sm_svm, y_train_sm_svm <span class="op">=</span> build_svm_subset(</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>    X_train_sm_full, y_train_sm_full,</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>    minority_classes<span class="op">=</span>minority_classes,</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>    max_samples<span class="op">=</span><span class="dv">5000</span>,</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) SVM baseline (no SMOTE)</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>svm_fast <span class="op">=</span> make_fast_svm_rbf()</span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a>svm_fast.fit(X_train_svm, y_train_svm)</span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a>y_pred_svm <span class="op">=</span> svm_fast.predict(X_test)</span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">SVM-RBF baseline (fast, subset)"</span>)</span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a>classification_summary(y_test, y_pred_svm, print_report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>plot_confusion(y_test, y_pred_svm, title<span class="op">=</span><span class="st">"SVM-RBF (fast baseline, subset)"</span>)</span>
+<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) SVM on SMOTE-resampled subset</span></span>
+<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a>svm_sm <span class="op">=</span> make_fast_svm_rbf()</span>
+<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a>svm_sm.fit(X_train_sm_svm, y_train_sm_svm)</span>
+<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a>y_pred_svm_sm <span class="op">=</span> svm_sm.predict(X_test)</span>
+<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">SVM-RBF + SMOTE (fast, subset)"</span>)</span>
+<span id="cb39-54"><a href="#cb39-54" aria-hidden="true" tabindex="-1"></a>classification_summary(y_test, y_pred_svm_sm, print_report<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb39-55"><a href="#cb39-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-56"><a href="#cb39-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Minority class performance (SVM + SMOTE)"</span>)</span>
+<span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a>evaluate_subset(minority_classes, y_test, y_pred_svm_sm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Minority classes: [3, 2]
+Class counts: Counter({0: 313166, 4: 77822, 1: 3285, 2: 901, 3: 42})
+SVM subset size: (2000, 115) class counts: Counter({2: 901, 0: 853, 4: 201, 3: 42, 1: 3})
+SMOTE sampling strategy: {3: 313166, 2: 313166}
+After SMOTE (full): Counter({0: 313166, 2: 313166, 3: 313166, 4: 77822, 1: 3285})
+SVM subset size: (1020605, 115) class counts: Counter({2: 313166, 3: 313166, 0: 313166, 4: 77822, 1: 3285})
+
+SVM-RBF baseline (fast, subset)
+              precision    recall  f1-score   support
+
+           0       1.00      0.99      1.00     78292
+           1       1.00      0.07      0.13       822
+           2       0.13      1.00      0.23       225
+           3       0.11      0.60      0.19        10
+           4       0.97      0.96      0.97     19456
+
+    accuracy                           0.98     98805
+   macro avg       0.64      0.72      0.50     98805
+weighted avg       0.99      0.98      0.98     98805
+
+
+SVM-RBF + SMOTE (fast, subset)
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00     78292
+           1       0.98      0.98      0.98       822
+           2       0.70      0.98      0.82       225
+           3       0.78      0.70      0.74        10
+           4       1.00      0.99      1.00     19456
+
+    accuracy                           1.00     98805
+   macro avg       0.89      0.93      0.91     98805
+weighted avg       1.00      1.00      1.00     98805
+
+
+Minority class performance (SVM + SMOTE)
+Subset size: 235
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00         0
+           2       1.00      0.98      0.99       225
+           3       1.00      0.70      0.82        10
+           4       0.00      0.00      0.00         0
+
+    accuracy                           0.97       235
+   macro avg       0.50      0.42      0.45       235
+weighted avg       1.00      0.97      0.98       235
+</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>{'0': {'precision': 0.0, 'recall': 0.0, 'f1-score': 0.0, 'support': 0.0},
+ '2': {'precision': 0.995475113122172,
+  'recall': 0.9777777777777777,
+  'f1-score': 0.9865470852017937,
+  'support': 225.0},
+ '3': {'precision': 1.0,
+  'recall': 0.7,
+  'f1-score': 0.8235294117647058,
+  'support': 10.0},
+ '4': {'precision': 0.0, 'recall': 0.0, 'f1-score': 0.0, 'support': 0.0},
+ 'accuracy': 0.9659574468085106,
+ 'macro avg': {'precision': 0.498868778280543,
+  'recall': 0.4194444444444444,
+  'f1-score': 0.4525191242416249,
+  'support': 235.0},
+ 'weighted avg': {'precision': 0.9956676614999519,
+  'recall': 0.9659574468085106,
+  'f1-score': 0.9796101629278751,
+  'support': 235.0}}</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="week_04_ml_models_files/figure-html/cell-24-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="c0a6426e-4aa1-4553-a4de-69aaa6aa9ea6" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save existing results for later evaluation</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.utils <span class="im">import</span> Paths</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> Paths().ensure()</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>this_dir <span class="op">=</span> Path.cwd()</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> this_dir.parent <span class="cf">if</span> this_dir.name <span class="op">==</span> <span class="st">"notebooks"</span> <span class="cf">else</span> this_dir</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Use paths.reports if it exists; otherwise fallback to &lt;project_root&gt;/reports</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>reports_root <span class="op">=</span> <span class="bu">getattr</span>(paths, <span class="st">"reports"</span>, project_root <span class="op">/</span> <span class="st">"reports"</span>)</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>wk4_dir <span class="op">=</span> reports_root <span class="op">/</span> <span class="st">"week_04"</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>wk4_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saving Week 04 results under:"</span>, wk4_dir)</span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a><span class="co"># UNSUPERVISED / SEMI-SUPERVISED </span></span>
+<span id="cb42-21"><a href="#cb42-21" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb42-22"><a href="#cb42-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Use variables that ALREADY exist from earlier cells:</span></span>
+<span id="cb42-23"><a href="#cb42-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   y_test_bin     : binary true labels (0 = normal, 1 = attack)</span></span>
+<span id="cb42-24"><a href="#cb42-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   y_pred_iso     : Isolation Forest binary predictions</span></span>
+<span id="cb42-25"><a href="#cb42-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   y_pred_ocsvm   : OC-SVM binary predictions</span></span>
+<span id="cb42-26"><a href="#cb42-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   y_pred_ae      : Autoencoder binary predictions</span></span>
+<span id="cb42-27"><a href="#cb42-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   test_err       : Autoencoder reconstruction error (per test sample)</span></span>
+<span id="cb42-28"><a href="#cb42-28" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb42-29"><a href="#cb42-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Scores are taken from existing values:</span></span>
+<span id="cb42-30"><a href="#cb42-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   - Isolation Forest / OC-SVM: score = y_pred_* (0/1 as a crude anomaly score)</span></span>
+<span id="cb42-31"><a href="#cb42-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   - Autoencoder: score = test_err reconstruction error)</span></span>
+<span id="cb42-32"><a href="#cb42-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-33"><a href="#cb42-33" aria-hidden="true" tabindex="-1"></a>unsup_frames <span class="op">=</span> []</span>
+<span id="cb42-34"><a href="#cb42-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-35"><a href="#cb42-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_binary_model_existing(name, y_true, y_pred, score):</span>
+<span id="cb42-36"><a href="#cb42-36" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb42-37"><a href="#cb42-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">"model"</span>:      name,</span>
+<span id="cb42-38"><a href="#cb42-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">"y_true_bin"</span>: np.asarray(y_true).astype(<span class="bu">int</span>),</span>
+<span id="cb42-39"><a href="#cb42-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">"y_pred_bin"</span>: np.asarray(y_pred).astype(<span class="bu">int</span>),</span>
+<span id="cb42-40"><a href="#cb42-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">"score"</span>:      np.asarray(score).astype(<span class="bu">float</span>),</span>
+<span id="cb42-41"><a href="#cb42-41" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb42-42"><a href="#cb42-42" aria-hidden="true" tabindex="-1"></a>    unsup_frames.append(df)</span>
+<span id="cb42-43"><a href="#cb42-43" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Added unsupervised/semi-supervised model: </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb42-44"><a href="#cb42-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-45"><a href="#cb42-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Isolation Forest</span></span>
+<span id="cb42-46"><a href="#cb42-46" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test_bin"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_iso"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-47"><a href="#cb42-47" aria-hidden="true" tabindex="-1"></a>    add_binary_model_existing(</span>
+<span id="cb42-48"><a href="#cb42-48" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Isolation Forest"</span>,</span>
+<span id="cb42-49"><a href="#cb42-49" aria-hidden="true" tabindex="-1"></a>        y_test_bin,</span>
+<span id="cb42-50"><a href="#cb42-50" aria-hidden="true" tabindex="-1"></a>        y_pred_iso,</span>
+<span id="cb42-51"><a href="#cb42-51" aria-hidden="true" tabindex="-1"></a>        y_pred_iso,   <span class="co"># just reuse 0/1 prediction as score (no recomputation)</span></span>
+<span id="cb42-52"><a href="#cb42-52" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb42-53"><a href="#cb42-53" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-54"><a href="#cb42-54" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Isolation Forest predictions not found; skipping."</span>)</span>
+<span id="cb42-55"><a href="#cb42-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-56"><a href="#cb42-56" aria-hidden="true" tabindex="-1"></a><span class="co"># OC-SVM</span></span>
+<span id="cb42-57"><a href="#cb42-57" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test_bin"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_ocsvm"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-58"><a href="#cb42-58" aria-hidden="true" tabindex="-1"></a>    add_binary_model_existing(</span>
+<span id="cb42-59"><a href="#cb42-59" aria-hidden="true" tabindex="-1"></a>        <span class="st">"OC-SVM (RBF)"</span>,</span>
+<span id="cb42-60"><a href="#cb42-60" aria-hidden="true" tabindex="-1"></a>        y_test_bin,</span>
+<span id="cb42-61"><a href="#cb42-61" aria-hidden="true" tabindex="-1"></a>        y_pred_ocsvm,</span>
+<span id="cb42-62"><a href="#cb42-62" aria-hidden="true" tabindex="-1"></a>        y_pred_ocsvm,  <span class="co"># reuse 0/1 prediction as score</span></span>
+<span id="cb42-63"><a href="#cb42-63" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb42-64"><a href="#cb42-64" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-65"><a href="#cb42-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"OC-SVM predictions not found; skipping."</span>)</span>
+<span id="cb42-66"><a href="#cb42-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-67"><a href="#cb42-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Autoencoder</span></span>
+<span id="cb42-68"><a href="#cb42-68" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test_bin"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_ae"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"test_err"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-69"><a href="#cb42-69" aria-hidden="true" tabindex="-1"></a>    add_binary_model_existing(</span>
+<span id="cb42-70"><a href="#cb42-70" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Deep Autoencoder"</span>,</span>
+<span id="cb42-71"><a href="#cb42-71" aria-hidden="true" tabindex="-1"></a>        y_test_bin,</span>
+<span id="cb42-72"><a href="#cb42-72" aria-hidden="true" tabindex="-1"></a>        y_pred_ae,</span>
+<span id="cb42-73"><a href="#cb42-73" aria-hidden="true" tabindex="-1"></a>        test_err,      <span class="co"># reconstruction error already computed</span></span>
+<span id="cb42-74"><a href="#cb42-74" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb42-75"><a href="#cb42-75" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-76"><a href="#cb42-76" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Autoencoder predictions/errors not found; skipping."</span>)</span>
+<span id="cb42-77"><a href="#cb42-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-78"><a href="#cb42-78" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> unsup_frames:</span>
+<span id="cb42-79"><a href="#cb42-79" aria-hidden="true" tabindex="-1"></a>    unsup_df <span class="op">=</span> pd.concat(unsup_frames, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb42-80"><a href="#cb42-80" aria-hidden="true" tabindex="-1"></a>    unsup_csv_path <span class="op">=</span> wk4_dir <span class="op">/</span> <span class="st">"week04_unsupervised_predictions.csv"</span></span>
+<span id="cb42-81"><a href="#cb42-81" aria-hidden="true" tabindex="-1"></a>    unsup_parquet_path <span class="op">=</span> wk4_dir <span class="op">/</span> <span class="st">"week04_unsupervised_predictions.parquet"</span></span>
+<span id="cb42-82"><a href="#cb42-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-83"><a href="#cb42-83" aria-hidden="true" tabindex="-1"></a>    unsup_df.to_csv(unsup_csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-84"><a href="#cb42-84" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb42-85"><a href="#cb42-85" aria-hidden="true" tabindex="-1"></a>        unsup_df.to_parquet(unsup_parquet_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-86"><a href="#cb42-86" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb42-87"><a href="#cb42-87" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Parquet save for unsupervised models failed (optional):"</span>, e)</span>
+<span id="cb42-88"><a href="#cb42-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-89"><a href="#cb42-89" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Saved unsupervised/semi-supervised results to:"</span>)</span>
+<span id="cb42-90"><a href="#cb42-90" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">" -"</span>, unsup_csv_path)</span>
+<span id="cb42-91"><a href="#cb42-91" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">" -"</span>, unsup_parquet_path)</span>
+<span id="cb42-92"><a href="#cb42-92" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-93"><a href="#cb42-93" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"No unsupervised/semi-supervised models were added; nothing saved for that group."</span>)</span>
+<span id="cb42-94"><a href="#cb42-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-95"><a href="#cb42-95" aria-hidden="true" tabindex="-1"></a>sup_frames <span class="op">=</span> []</span>
+<span id="cb42-96"><a href="#cb42-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-97"><a href="#cb42-97" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> add_supervised_existing(model_name, y_true, y_pred):</span>
+<span id="cb42-98"><a href="#cb42-98" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb42-99"><a href="#cb42-99" aria-hidden="true" tabindex="-1"></a>        <span class="st">"model"</span>:  model_name,</span>
+<span id="cb42-100"><a href="#cb42-100" aria-hidden="true" tabindex="-1"></a>        <span class="st">"y_true"</span>: np.asarray(y_true),</span>
+<span id="cb42-101"><a href="#cb42-101" aria-hidden="true" tabindex="-1"></a>        <span class="st">"y_pred"</span>: np.asarray(y_pred),</span>
+<span id="cb42-102"><a href="#cb42-102" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb42-103"><a href="#cb42-103" aria-hidden="true" tabindex="-1"></a>    sup_frames.append(df)</span>
+<span id="cb42-104"><a href="#cb42-104" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Added supervised model: </span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb42-105"><a href="#cb42-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-106"><a href="#cb42-106" aria-hidden="true" tabindex="-1"></a><span class="co"># Random Forest baseline</span></span>
+<span id="cb42-107"><a href="#cb42-107" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_rf"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-108"><a href="#cb42-108" aria-hidden="true" tabindex="-1"></a>    add_supervised_existing(<span class="st">"Random Forest (baseline)"</span>, y_test, y_pred_rf)</span>
+<span id="cb42-109"><a href="#cb42-109" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-110"><a href="#cb42-110" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Random Forest baseline predictions not found; skipping."</span>)</span>
+<span id="cb42-111"><a href="#cb42-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-112"><a href="#cb42-112" aria-hidden="true" tabindex="-1"></a><span class="co"># SVM-RBF baseline</span></span>
+<span id="cb42-113"><a href="#cb42-113" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_svm"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-114"><a href="#cb42-114" aria-hidden="true" tabindex="-1"></a>    add_supervised_existing(<span class="st">"SVM-RBF (baseline)"</span>, y_test, y_pred_svm)</span>
+<span id="cb42-115"><a href="#cb42-115" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-116"><a href="#cb42-116" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"SVM-RBF baseline predictions not found; skipping."</span>)</span>
+<span id="cb42-117"><a href="#cb42-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-118"><a href="#cb42-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Random Forest + SMOTE</span></span>
+<span id="cb42-119"><a href="#cb42-119" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_rf_sm"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-120"><a href="#cb42-120" aria-hidden="true" tabindex="-1"></a>    add_supervised_existing(<span class="st">"Random Forest + SMOTE"</span>, y_test, y_pred_rf_sm)</span>
+<span id="cb42-121"><a href="#cb42-121" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-122"><a href="#cb42-122" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Random Forest + SMOTE predictions not found; skipping."</span>)</span>
+<span id="cb42-123"><a href="#cb42-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-124"><a href="#cb42-124" aria-hidden="true" tabindex="-1"></a><span class="co"># SVM-RBF + SMOTE</span></span>
+<span id="cb42-125"><a href="#cb42-125" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">"y_test"</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="st">"y_pred_svm_sm"</span> <span class="kw">in</span> <span class="bu">globals</span>():</span>
+<span id="cb42-126"><a href="#cb42-126" aria-hidden="true" tabindex="-1"></a>    add_supervised_existing(<span class="st">"SVM-RBF + SMOTE"</span>, y_test, y_pred_svm_sm)</span>
+<span id="cb42-127"><a href="#cb42-127" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-128"><a href="#cb42-128" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"SVM-RBF + SMOTE predictions not found; skipping."</span>)</span>
+<span id="cb42-129"><a href="#cb42-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-130"><a href="#cb42-130" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> sup_frames:</span>
+<span id="cb42-131"><a href="#cb42-131" aria-hidden="true" tabindex="-1"></a>    sup_pred_df <span class="op">=</span> pd.concat(sup_frames, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb42-132"><a href="#cb42-132" aria-hidden="true" tabindex="-1"></a>    sup_csv_path <span class="op">=</span> wk4_dir <span class="op">/</span> <span class="st">"week04_supervised_predictions.csv"</span></span>
+<span id="cb42-133"><a href="#cb42-133" aria-hidden="true" tabindex="-1"></a>    sup_parquet_path <span class="op">=</span> wk4_dir <span class="op">/</span> <span class="st">"week04_supervised_predictions.parquet"</span></span>
+<span id="cb42-134"><a href="#cb42-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-135"><a href="#cb42-135" aria-hidden="true" tabindex="-1"></a>    sup_pred_df.to_csv(sup_csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-136"><a href="#cb42-136" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb42-137"><a href="#cb42-137" aria-hidden="true" tabindex="-1"></a>        sup_pred_df.to_parquet(sup_parquet_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb42-138"><a href="#cb42-138" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
+<span id="cb42-139"><a href="#cb42-139" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Parquet save for supervised models failed (optional):"</span>, e)</span>
+<span id="cb42-140"><a href="#cb42-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-141"><a href="#cb42-141" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Saved supervised results to:"</span>)</span>
+<span id="cb42-142"><a href="#cb42-142" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">" -"</span>, sup_csv_path)</span>
+<span id="cb42-143"><a href="#cb42-143" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">" -"</span>, sup_parquet_path)</span>
+<span id="cb42-144"><a href="#cb42-144" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb42-145"><a href="#cb42-145" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"No supervised models were added; nothing saved for that group."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Saving Week 04 results under: C:\Users\mehra\Final_Project\reports\week_04
+Added unsupervised/semi-supervised model: Isolation Forest
+Added unsupervised/semi-supervised model: OC-SVM (RBF)
+Added unsupervised/semi-supervised model: Deep Autoencoder
+
+Saved unsupervised/semi-supervised results to:
+ - C:\Users\mehra\Final_Project\reports\week_04\week04_unsupervised_predictions.csv
+ - C:\Users\mehra\Final_Project\reports\week_04\week04_unsupervised_predictions.parquet
+Added supervised model: Random Forest (baseline)
+Added supervised model: SVM-RBF (baseline)
+Added supervised model: Random Forest + SMOTE
+Added supervised model: SVM-RBF + SMOTE
+
+Saved supervised results to:
+ - C:\Users\mehra\Final_Project\reports\week_04\week04_supervised_predictions.csv
+ - C:\Users\mehra\Final_Project\reports\week_04\week04_supervised_predictions.parquet</code></pre>
+</div>
+</div>
+<div id="bc290ed6-3b4d-410f-a02c-034901e7f662" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Save Week 04 models for Week 06 explainability</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> joblib</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.utils <span class="im">import</span> Paths</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> Paths().ensure()</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>this_dir <span class="op">=</span> Path.cwd()</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>project_root <span class="op">=</span> this_dir.parent <span class="cf">if</span> this_dir.name <span class="op">==</span> <span class="st">"notebooks"</span> <span class="cf">else</span> this_dir</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>models_dir <span class="op">=</span> <span class="bu">getattr</span>(paths, <span class="st">"models"</span>, project_root <span class="op">/</span> <span class="st">"models"</span>)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>models_dir.mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>rf_path  <span class="op">=</span> models_dir <span class="op">/</span> <span class="st">"week04_rf.joblib"</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>svm_path <span class="op">=</span> models_dir <span class="op">/</span> <span class="st">"week04_svm.joblib"</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>ae_path  <span class="op">=</span> models_dir <span class="op">/</span> <span class="st">"week04_ae.joblib"</span></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saving models to:"</span>, models_dir)</span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a><span class="co"># These variables already exist in your notebook:</span></span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   best_rf   -&gt; best RandomForest from GridSearch</span></span>
+<span id="cb44-22"><a href="#cb44-22" aria-hidden="true" tabindex="-1"></a><span class="co">#   svm_fast  -&gt; SVM-RBF Pipeline (baseline)</span></span>
+<span id="cb44-23"><a href="#cb44-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   autoencoder -&gt; trained deep autoencoder</span></span>
+<span id="cb44-24"><a href="#cb44-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-25"><a href="#cb44-25" aria-hidden="true" tabindex="-1"></a>joblib.dump(best_rf, rf_path)</span>
+<span id="cb44-26"><a href="#cb44-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saved RF to:"</span>, rf_path)</span>
+<span id="cb44-27"><a href="#cb44-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-28"><a href="#cb44-28" aria-hidden="true" tabindex="-1"></a>joblib.dump(svm_fast, svm_path)</span>
+<span id="cb44-29"><a href="#cb44-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saved SVM to:"</span>, svm_path)</span>
+<span id="cb44-30"><a href="#cb44-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-31"><a href="#cb44-31" aria-hidden="true" tabindex="-1"></a>joblib.dump(autoencoder, ae_path)</span>
+<span id="cb44-32"><a href="#cb44-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Saved Autoencoder to:"</span>, ae_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Saving models to: C:\Users\mehra\Final_Project\models
+Saved RF to: C:\Users\mehra\Final_Project\models\week04_rf.joblib
+Saved SVM to: C:\Users\mehra\Final_Project\models\week04_svm.joblib
+Saved Autoencoder to: C:\Users\mehra\Final_Project\models\week04_ae.joblib</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

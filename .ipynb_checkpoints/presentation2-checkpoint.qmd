@@ -1,0 +1,161 @@
+---
+title: "Anomaly Detection Presentation"
+format: revealjs
+---
+
+## Slide 1 — Introduction & Motivation
+- Rising **network complexity**
+- Expanding **attack surface**
+- Need for **adaptive detection**
+- Limits of **signature systems**
+- Value of **behavioral analytics**
+- Goal: improved **threat identification**
+
+::: notes
+Executives face rising operational risks due to evolving traffic patterns. Signature systems miss new and subtle attacks. This project evaluates anomaly-based and learning-based detection to strengthen SOC capabilities.
+:::
+
+## Slide 2 — Problem Statement
+- Q1: **Effectiveness** of unsupervised detectors
+- Q2: **Supervised vs. statistical** performance
+- Focus: **accuracy**, **precision**, **recall**
+- Assess **interpretability** differences
+- Evaluate **malicious traffic** detection
+- Identify operational **trade-offs**
+
+::: notes
+We test whether unsupervised models trained on only normal traffic can detect attacks, and how supervised ML compares to statistical anomaly methods across key performance dimensions.
+:::
+
+## Slide 3 — Background
+- Expanding **cyberattack landscape**
+- Importance of **anomaly detection**
+- Mix of **statistical** and **ML** tools**
+- Challenge of **imbalanced attacks**
+- Need for **explainability**
+- Relevance to modern **SOCs**
+
+::: notes
+Anomaly detection addresses unknown threats. Statistical and ML approaches vary in complexity and interpretability. The project establishes a unified evaluation environment using NSL-KDD.
+:::
+
+## Slide 4 — Dataset Overview
+- **NSL-KDD** standard dataset
+- 41 engineered **network features**
+- Balanced **training/test** sets
+- Multiple **attack categories**
+- Supports **binary** and **multi-class** tasks
+- Widely used for **IDS research**
+
+::: notes
+NSL-KDD improves on KDD'99 by reducing redundancy and balancing samples. Includes DoS, Probe, U2R, and R2L attacks for comprehensive evaluation.
+:::
+
+## Slide 5 — Methodology
+- Multi-week **pipeline design**
+- Data **cleaning** and **scaling**
+- Unsupervised: **Z-score**, **IQR**, **Elliptic**, **Mahalanobis**
+- Advanced: **Isolation Forest**, **LOF**, **Autoencoder**
+- Supervised: **RF**, **SVM**, **LogReg**
+- Evaluation on shared **test artifacts**
+
+::: notes
+All models use consistent preprocessing. Unsupervised methods operate on unlabeled data, while supervised models leverage labeled traffic for learning. Metrics and outputs are standardized.
+:::
+
+## Slide 6 — Unsupervised Results: Statistical
+- **Z-score** detects extreme deviations
+- **IQR** captures distribution outliers
+- **Elliptic Envelope** robust covariance
+- **Mahalanobis** multivariate distance
+- High **false-positive** variability
+- Limited subtle **attack detection**
+
+::: notes
+Statistical detectors identify only the most obvious anomalies. Their simplicity results in high noise and low sensitivity to sophisticated attacks.
+:::
+
+## Slide 7 — Unsupervised Results: Advanced
+- **Isolation Forest** strong separation
+- **LOF** local-density anomalies
+- **Autoencoder** learns latent structure
+- Outperforms statistical baselines
+- Lower recall for **stealth attacks**
+- Needs **threshold tuning**
+
+::: notes
+Advanced models detect broader attack patterns but require careful threshold calibration. Autoencoder shows strongest unsupervised performance but still misses low-signal threats.
+:::
+
+## Slide 8 — Supervised Results: Models
+- **Random Forest** best performance
+- High **precision** and **recall**
+- **SVM-RBF** competitive results**
+- Logistic baseline comparison
+- Clear attack **class separation**
+- Stable across **test folds**
+
+::: notes
+Supervised models provided significantly stronger predictive performance. Random Forest achieved the best balance of accuracy and robustness.
+:::
+
+## Slide 9 — Supervised Results: Explainability
+- RF feature **importance clarity**
+- Identify top **predictive fields**
+- SVM **decision boundary** insights
+- Enhanced analyst **trust**
+- Supports security **auditability**
+- Reduces black-box **risk**
+
+::: notes
+Interpretability is critical for SOC adoption. RF and SVM explanations helped reveal why specific traffic was flagged.
+:::
+
+## Slide 10 — Comparison
+- Supervised models **outperform** unsupervised
+- Unsupervised useful for **unknown** attacks
+- Supervised highest **accuracy**
+- Autoencoder best unsupervised
+- Statistical weakest coverage
+- RF strongest overall detector
+
+::: notes
+The combined evaluation shows supervised learning clearly ahead when labels exist, but unsupervised models remain valuable for zero-day threats.
+:::
+
+## Slide 11 — Discussion (Answers to Questions)
+- Unsupervised moderately **effective**
+- Detects only **high-variance** anomalies
+- Struggles with **low-signal** attacks
+- Supervised significantly **stronger**
+- Higher **precision** and **recall**
+- Better overall **interpretability**
+
+::: notes
+Q1: Unsupervised methods partially detect attacks but with many false results.
+Q2: Supervised ML consistently achieves stronger detection, cleaner separation, and clearer interpretability.
+:::
+
+## Slide 12 — Overall Trade-Off
+- Supervised: high **accuracy**, low flexibility
+- Unsupervised: high **adaptability**, lower precision
+- Statistical: fast, **low insight**
+- Supervised requires **maintenance**
+- Unsupervised requires **threshold tuning**
+- Trade-off: precision vs **generalization**
+
+::: notes
+Week06 analysis highlights the tension between flexible anomaly detection and high-precision classification. A combined approach is often optimal.
+:::
+
+## Slide 13 — Real-World Implications
+- Manage **false positives** proactively
+- Adjust **alert thresholds** regularly
+- Plan periodic **model retraining**
+- Monitor **concept drift** indicators
+- Combine supervised + unsupervised
+- Strengthen SOC **decision support**
+
+::: notes
+Practical IDS deployment depends on explainability, adaptive thresholds, and continuous monitoring. Hybrid models offer the most robust long-term strategy.
+:::

@@ -17,168 +17,296 @@ execute:
   echo: false
 ---
 
-```{python}
-#| label: load-packages
-#| include: false
+## Introduction & Motivation {background-gradient="linear-gradient(to bottom, #283b95, 17b2c3)" transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Rising **network complexity**
+- Expanding **attack surface**
+- Need for **adaptive detection**
+- Limits of **signature systems**
+- Value of **behavioral analytics**
+- Goal: improved **threat identification**
 
-# Load packages here
-import pandas as pd
-import seaborn as sns
-
-```
-
-```{python}
-#| label: setup
-#| include: false
-#| 
-# Set up plot theme and figure resolution
-sns.set_theme(style="whitegrid")
-sns.set_context("notebook", font_scale=1.1)
-
-import matplotlib.pyplot as plt
-plt.rcParams['figure.dpi'] = 300
-plt.rcParams['savefig.dpi'] = 300
-plt.rcParams['figure.figsize'] = (6, 6 * 0.618)
-```
-
-```{python}
-#| label: load-data
-#| include: false
-# Load data in Python
-mtcars = sns.load_dataset('mpg').dropna()  # mtcars dataset is similar to the mpg dataset from seaborn
-mtcars['speed'] = mtcars['horsepower'] / mtcars['weight']
-
-penguins = sns.load_dataset('penguins').dropna()
-```
-
-# Using Quarto for presentations
-
-## Dataset Limitations and Justification
-
-Although the **NSL-KDD dataset** is dated and partly **synthetic**—constructed from simulated network environments rather than real enterprise traffic—it remains one of the most widely used and well-documented benchmarks for intrusion detection research.  
-Its design introduces several **limitations** that will be carefully considered in this study:
-
-- **Temporal relevance:** The dataset reflects network behaviors and attack types common in the late 1990s, before the advent of modern threats such as advanced persistent attacks, encrypted communication channels, and large-scale botnets.  
-- **Synthetic generation:** The data were produced under controlled lab conditions rather than from live network capture, which means background noise, user variability, and realistic packet timing patterns are underrepresented.  
-- **Feature design:** Certain attributes (e.g., `service`, `flag`) may no longer map directly to contemporary protocols or operating systems, reducing direct applicability to modern network telemetry.  
-- **Label completeness:** All attacks are labeled, unlike in real-world network monitoring where labels are often incomplete or delayed.
-
-Despite these constraints, NSL-KDD remains a valuable **controlled testbed** for benchmarking anomaly and intrusion detection algorithms because:
-
-- It provides **clearly defined attack families** (DoS, Probe, R2L, U2R) that facilitate comparative and reproducible experiments.  
-- It allows systematic evaluation of **class imbalance**, **thresholding**, and **interpretability trade-offs** across model types.  
-- It serves as a **pedagogically consistent foundation** for developing methods that can later be generalized to newer datasets such as **CIC-IDS2017**, **UNSW-NB15**, or proprietary enterprise data.
-
-**Mitigation strategies include:**
-
-- Applying **robust preprocessing**, **resampling**, and **dimensional reduction** to reduce dataset biases.  
-- Framing results as **algorithmic performance benchmarks**, not as direct indicators of deployment-ready accuracy.  
-- Reflecting on how each model’s strengths and weaknesses might translate to **modern, encrypted, or real-time network environments**.
-
-
-## Layouts
-
-You can use plain text
-
-::: columns
-::: {.column width="40%"}
--   or bullet points[^1]
+::: aside 
+This project is motivated by the growing complexity of modern networks and the expanding attack surface that organizations face. Traditional signature-based detection struggles to keep pace with evolving and previously unseen threats. By shifting toward adaptive, behavior-based analytics, we can identify abnormal activity earlier and more accurately. The overall objective is to strengthen threat detection capabilities and improve security decision-making at scale.
 :::
 
-::: {.column width="60%"}
-or in two columns
-:::
-:::
+## Problem Statement {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Identify limits of current **anomaly detection** approaches
+- Assess ability to detect **malicious network behavior**
+- Compare **unsupervised**, **statistical**, and **supervised** methods
+- Evaluate differences in **detection effectiveness**
+- Understand variation in **precision**, **recall**, and false alerts
+- Determine most reliable model for **operational deployment**
 
-[^1]: And add footnotes
-
--   like
-
--   this
-
-## Code
-
-```{python}
-from sklearn.linear_model import LinearRegression
-import statsmodels.api as sm
-import pandas as pd
-
-# Fit a linear regression model
-X = mtcars[['speed']]
-y = mtcars['mpg']
-model = LinearRegression().fit(X, y)
-
-# Summary of the model
-X2 = sm.add_constant(X)
-est = sm.OLS(y, X2)
-est2 = est.fit()
-print(est2.summary())
-```
-
-## Plots
-
-```{python}
-penguins['species'] = penguins['species'].apply(lambda x: "Adelie" if x == "Adelie" else "Other")
-sns.scatterplot(data=penguins, x='flipper_length_mm', y='body_mass_g', hue='species')
-plt.show()
-```
-
-## Plot and text
-
-::: columns
-::: {.column width="50%"}
--   Some text
-
--   goes here
+::: aside
+The goal is to understand how different detection methods perform when identifying malicious activity in complex network environments. We evaluate traditional statistical models, modern unsupervised anomaly detectors, and supervised machine-learning approaches to determine their strengths and limitations. The focus is on how accurately these methods detect threats, how often they generate false alerts, and how interpretable their outputs are for analysts. Ultimately, the aim is to determine which approach provides the most reliable and operationally effective intrusion detection capability.
 :::
 
-::: {.column width="50%"}
-```{python}
-#| warning: false
-#| fig.width: 5.5
-fig, ax = plt.subplots(figsize=(5.5, 5.5 * 0.618))
-sns.boxplot(data=penguins, x='bill_length_mm', y='species', hue='species', ax=ax)
-plt.show()
-```
+## Background {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Expanding **cyberattack landscape**
+- Importance of **anomaly detection**
+- Mix of **statistical** and **ML** tools**
+- Challenge of **imbalanced attacks**
+- Need for **explainability**
+- Relevance to modern **SOCs**
+
+::: aside
+Cyberattacks continue to grow in scale and sophistication, making traditional rule-based detection insufficient. Anomaly detection is increasingly important because it can surface unusual or emerging behaviors that signatures fail to capture. Our evaluation spans both statistical techniques and machine-learning models, each offering different strengths. A major challenge in this domain is the imbalance between normal traffic and rare attack events, which can distort model performance. Explainability is also essential so analysts can trust and validate detection outputs. These considerations directly impact how Security Operations Centers operate and prioritize alerts.
 :::
+
+## Dataset Overview {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- **NSL-KDD** standard dataset
+- 41 engineered **network features**
+- Balanced **training/test** sets
+- Multiple **attack categories**
+- Supports **binary** and **multi-class** tasks
+- Widely used for **IDS research**
+
+::: aside
+The NSL-KDD dataset is a widely used benchmark for intrusion detection research and is designed to address some of the limitations in the original KDD’99 dataset, such as redundant records. It contains 41 engineered network features and multiple attack categories, enabling both binary and multi-class evaluation. For this project, we used the 10% version of the dataset, which provides a representative but computationally manageable subset of the full collection. The data comes from the University of New Brunswick’s Canadian Institute for Cybersecurity repository, which maintains standardized, research-grade network security datasets.
 :::
 
-# A new section...
+## Methodology {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Standard pipeline: **EDA** → **preprocessing** → **modeling** → **evaluation**
+- Data **cleaning**, **encoding**, and **scaling**
+- Unsupervised: **Z-score**, **IQR**, **Elliptic**, **Mahalanobis**
+- Advanced: **Isolation Forest**, **LOF**, **Autoencoder**
+- Supervised: **RF**, **SVM**, **LogReg**
+- Evaluated using **accuracy**, **precision**, **recall**, **F1**, **AUC**
 
-## Tables
+::: aside
+Our workflow follows a standard machine learning pipeline beginning with exploratory data analysis, followed by preprocessing steps such as cleaning, encoding, and scaling. We implemented a range of models, starting with statistical and unsupervised anomaly detectors, then moving to more advanced techniques like Isolation Forest, Local Outlier Factor, and Autoencoders. Supervised models, including Random Forest, SVM, and Logistic Regression, were trained using the labeled portions of the dataset. All models were evaluated using consistent metrics—accuracy, precision, recall, F1, and AUC—to ensure a fair comparison across approaches.
+:::
 
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+## Unsupervised Results: Statistical {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- **Z-score** detects extreme deviations
+- **IQR** captures distribution outliers
+- **Elliptic Envelope** robust covariance
+- **Mahalanobis** multivariate distance
+- High **false-positive** variability
+- Limited subtle **attack detection**
 
-```{python}
-penguins.head().to_html()
-```
+::: aside
+These traditional statistical methods provide fast and lightweight anomaly detection but have clear limitations. Z-score and IQR rely on simple distribution thresholds, so they mainly detect very large deviations and miss more nuanced behaviors. Elliptic Envelope and Mahalanobis distance incorporate covariance structure, offering a more sophisticated view of normal traffic, but they still struggle with the complexity and variability of real attack patterns. Across all of these methods, we observed high false-positive rates and inconsistent performance, especially when the anomalies were subtle or closely resembled normal traffic. This highlights the need for more advanced models in operational environments.
+:::
 
-## Images
+## Unsupervised Results: Advanced {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- **Isolation Forest** strong separation
+- **LOF** local-density anomalies
+- **Autoencoder** learns latent structure
+- Outperforms statistical baselines
+- Lower recall for **stealth attacks**
+- Needs **threshold tuning**
 
-![Image credit: Danielle Navarro, Percolate.](images/watercolour_sys02_img34_teacup-ocean.png){fig-align="center" width="500"}
+::: aside
+These advanced unsupervised models deliver noticeably better performance than the simpler statistical methods. Isolation Forest is effective at separating anomalies by isolating rare behaviors, while LOF focuses on local density differences to detect unusual patterns in small regions of the feature space. The Autoencoder, which learns compressed representations of normal traffic, performed the strongest among the unsupervised approaches and was able to capture complex relationships between features. However, all these models still showed limitations, particularly with low-signal or stealthy attacks that closely resemble normal activity. Their performance is also highly sensitive to threshold settings, meaning operational tuning is essential for reliable detection.
+:::
 
-## Math Expressions {.smaller}
+## Supervised Results: Models {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- **Random Forest** best performance
+- High **precision** and **recall**
+- **SVM-RBF** competitive results
+- Logistic baseline comparison
+- Clear attack **class separation**
+- Stable across **test folds**
 
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. \$\\alpha+\\beta\$ renders $\alpha + \beta$. You can use the display style with double dollar signs:
+::: aside
+Supervised learning clearly provided the strongest results in this evaluation. Random Forest delivered the best overall performance with consistently high precision and recall, making it the most reliable model for distinguishing normal and malicious traffic. The SVM with an RBF kernel also performed competitively, especially on nonlinear patterns, while Logistic Regression served as a baseline for comparison. These models showed clear separation between attack classes and demonstrated stable behavior across multiple test folds, reinforcing their suitability for operational intrusion detection when labeled data is available.
+:::
 
-```         
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
+## Supervised Results: Explainability {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Random Forest feature **importance clarity**
+- Identify top **predictive fields**
+- SVM **decision boundary** insights
+- Enhanced analyst **trust**
+- Supports security **auditability**
+- Reduces black-box **risk**
 
-$$
-\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i
-$$
+::: aside
+A key advantage of the supervised models—especially Random Forest and SVM—is their interpretability. Random Forest provides clear feature-importance rankings, helping analysts understand which network attributes contribute most to attack detection. SVM models offer insights into decision boundaries, clarifying how the classifier separates malicious and normal behavior. These interpretability tools improve analyst trust, support auditing and compliance requirements, and reduce the risks associated with deploying opaque, black-box detection systems. For an operational SOC, this level of transparency is essential for validating alerts and refining detection strategies.
+:::
 
-Limitations:
+## Model Performance Summary {transition="fade-in slide-out" transition-speed="slow"}
 
-1.  The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-2.  There should not be spaces after the opening `$` or before the closing `$`.
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-# Wrap up
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 
-## Feeling adventurous?
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>model</th>
+      <th>precision_macro</th>
+      <th>recall_macro</th>
+      <th>f1_macro</th>
+      <th>roc_auc_ovr_macro</th>
+      <th>pr_auc_ovr_macro</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Random Forest (baseline)</td>
+      <td>0.962361</td>
+      <td>0.974293</td>
+      <td>0.967920</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Random Forest + SMOTE</td>
+      <td>0.947867</td>
+      <td>0.975182</td>
+      <td>0.960155</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SVM-RBF + SMOTE</td>
+      <td>0.890610</td>
+      <td>0.930098</td>
+      <td>0.905367</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>SVM-RBF (baseline)</td>
+      <td>0.642394</td>
+      <td>0.722858</td>
+      <td>0.501165</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Z-Score</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>OC-SVM (RBF)</td>
+      <td>0.779636</td>
+      <td>1.000000</td>
+      <td>0.876175</td>
+      <td>0.962972</td>
+      <td>0.779636</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Isolation Forest</td>
+      <td>0.769121</td>
+      <td>0.369132</td>
+      <td>0.498847</td>
+      <td>0.670050</td>
+      <td>0.414882</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Deep Autoencoder</td>
+      <td>0.906161</td>
+      <td>0.046605</td>
+      <td>0.088650</td>
+      <td>0.981710</td>
+      <td>0.878009</td>
+    </tr>
+  </tbody>
+</table>
 
--   You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+</div>
 
--   But some of you might want to play around with slide styling. Some solutions for this can be found at https://quarto.org/docs/presentations/revealjs.
+
+## Models Comparison {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Supervised models **outperform** unsupervised
+- Unsupervised useful for **unknown** attacks
+- Supervised highest **accuracy**
+- Autoencoder best unsupervised
+- Statistical weakest coverage
+- RF strongest overall detector
+
+::: aside
+When comparing all modeling approaches, supervised methods clearly performed the best overall, offering the highest accuracy and the most reliable detection across attack categories. Unsupervised models still play an important role, particularly for detecting new or previously unseen attack patterns, but their precision and consistency are lower. Among the unsupervised models, the Autoencoder showed the strongest capability, while simple statistical techniques provided the weakest coverage and struggled with complex behaviors. Random Forest emerged as the strongest individual model in the entire evaluation, combining accuracy, stability, and interpretability.
+:::
+
+##  Discussion {transition="fade-in slide-out" transition-speed="slow" .scrollable} 
+
+**How effectively can unsupervised anomaly detection identify malicious traffic?**
+
+- Trained only on **normal traffic**
+- Detects **high-variance anomalies**
+- Misses **subtle or stealth attacks**
+- Useful for **unknown threats**
+- Requires **threshold tuning**
+- Moderately effective overall
+
+::: aside
+Unsupervised anomaly detection methods can identify attacks that significantly deviate from normal behavior, especially high-variance or clearly abnormal patterns. However, they struggle with low-signal attacks that resemble legitimate traffic, leading to missed detections. Their strength lies in detecting unknown or emerging threats where labeled data is unavailable, but their performance is inconsistent without careful threshold calibration. Overall, unsupervised methods are moderately effective but insufficient as a standalone intrusion detection strategy.
+:::
+
+##  Discussion {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+
+**How do supervised ML models compare with statistical anomaly detectors?**
+
+- Supervised achieve **higher accuracy**
+- Stronger **precision** and **recall**
+- Better **class separation**
+- Statistical models detect only **simple outliers**
+- Supervised offer **clearer interpretability**
+- More reliable for **operational IDS**
+
+::: aside
+Supervised machine learning models significantly outperform statistical anomaly detection methods across all major evaluation metrics. They deliver higher accuracy, stronger precision and recall, and more consistent detection of diverse attack types. Statistical methods, such as Z-score, IQR, and Mahalanobis distance, catch only basic or extreme outliers and fail to capture complex attack behaviors. Supervised models also provide clearer interpretability through feature importance and decision boundary analysis, making them far easier for analysts to validate and operationalize. Overall, supervised learning offers far superior intrusion detection performance and reliability in real-world environments.
+:::
+
+## Discussion {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Unsupervised moderately **effective**
+- Detects only **high-variance** anomalies
+- Struggles with **low-signal** attacks
+- Supervised significantly **stronger**
+- Higher **precision** and **recall**
+- Better overall **interpretability**
+
+::: aside
+Overall, the results show that unsupervised methods are moderately effective but mainly detect anomalies that are large or highly unusual. They tend to miss low-signal or stealthy attacks that blend in with normal traffic. In contrast, supervised models performed significantly better across all key metrics, including precision and recall, and provided clearer interpretability for analysts. This makes them more dependable for operational use when labeled data is available. The comparison highlights that while unsupervised models add value for discovering unknown threats, supervised learning remains the stronger and more reliable foundation for intrusion detection.
+:::
+
+## Overall Trade-Off {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Supervised: high **accuracy**, low flexibility
+- Unsupervised: high **adaptability**, lower precision
+- Statistical: fast, **low insight**
+- Supervised requires **maintenance**
+- Unsupervised requires **threshold tuning**
+- Trade-off: precision vs **generalization**
+
+::: aside
+Each modeling approach comes with strengths and trade-offs. Supervised models deliver high accuracy and strong predictive power, but they depend on labeled data and require ongoing maintenance as network behavior evolves. Unsupervised models are more flexible and adaptable, making them valuable for detecting unfamiliar threats, but they generally produce lower precision and require careful threshold tuning. Statistical methods are fast and simple to deploy, yet they offer limited insight and struggle with complex attack patterns. Ultimately, the decision comes down to balancing precision against generalization, depending on the organization’s operational needs and risk tolerance.
+:::
+
+## Real-World Implications {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- Manage **false positives** proactively
+- Adjust **alert thresholds** regularly
+- Plan periodic **model retraining**
+- Monitor **concept drift** indicators
+- Combine supervised + unsupervised
+- Strengthen SOC **decision support**
+
+::: aside
+These findings translate into several practical considerations for real-world intrusion detection. First, managing false positives is essential to prevent analyst fatigue and ensure SOC efficiency. Alert thresholds should be reviewed and adjusted regularly, especially for unsupervised models that are sensitive to behavioral shifts. Models must be retrained periodically to stay aligned with evolving network patterns and avoid degradation from concept drift. A hybrid strategy—combining supervised and unsupervised techniques—can offer both strong accuracy and adaptability. Altogether, these practices enhance SOC decision-making and support more resilient and proactive cybersecurity operations.
+:::

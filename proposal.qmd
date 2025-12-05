@@ -53,7 +53,7 @@ from myst_nb import glue
 #| output: false
 
 
-data_path = Path("./data/NSL-KDD.data_10_percent_corrected")
+data_path = Path("./data/raw/NSL-KDD.raw")
 
 base_cols = [
     "duration","protocol_type","service","flag","src_bytes","dst_bytes",

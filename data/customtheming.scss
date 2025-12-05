@@ -1,3 +1,62 @@
 /*-- scss:defaults --*/
 
-$body-bg: #ffffff;
+/* Full-viewport gradient background for all slides */
+.reveal .backgrounds .slide-background {
+  background-image: linear-gradient(to bottom, #283b95, #a8ffff) !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+.reveal .backgrounds .slide-background:nth-of-type(1) {
+  background-image: none !important;
+  background-color: #ffffff !important; /* or your title bg color */
+}
+
+.reveal .slides section div.aside,
+.reveal .slides section aside.aside,
+.reveal .slides section .aside,
+.reveal .slides section .aside *,
+.reveal .aside,
+.reveal .aside * {
+  background: rgba(0,0,0,0.35);
+  border-left: 4px solid #ffffff;
+  padding: 1em;
+  border-radius: 8px;
+  color: #fff;
+
+}
+
+.reveal table {
+  font-size: 20px !important;
+}
+
+.reveal table th,
+.reveal table td {
+  text-align: left !important;
+}
+
+.reveal ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.reveal ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.15);  /* subtle transparent track */
+  border-radius: 10px;
+}
+
+.reveal ::-webkit-scrollbar-thumb {
+  background: #17b2c3;  /* your teal color */
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.4); /* adds contrast */
+}
+
+.reveal ::-webkit-scrollbar-thumb:hover {
+  background: #60dae3; /* lighter teal on hover */
+}
+
+.reveal {
+  scrollbar-width: thin;
+  scrollbar-color: #17b2c3 rgba(255, 255, 255, 0.15);
+}

@@ -7,5 +7,5 @@ jupyter: python3
 
 This project was developed by **Mehran Tajbakhsh** For [INFO 523 - Data Mining and Discovery](https://datamineaz.org/) at the University of Arizona, taught by Dr. Greg Chism. The team is comprised of the following team members.
 
--   Mehran Tajbakhsh: Last-year MSCS student with an MS in Computer Science specializing in Cybersecurity..
+-   Mehran Tajbakhsh: Final-year MSDS student with an MS in Computer Science, specializing in cybersecurity.
 

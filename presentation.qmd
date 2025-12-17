@@ -255,9 +255,10 @@ When comparing all modeling approaches, supervised methods clearly performed the
 - Useful for **unknown threats**
 - Requires **threshold tuning**
 - Moderately effective overall
+- **Metric Insight**
 
 ::: aside
-Unsupervised anomaly detection methods can identify attacks that significantly deviate from normal behavior, especially high-variance or clearly abnormal patterns. However, they struggle with low-signal attacks that resemble legitimate traffic, leading to missed detections. Their strength lies in detecting unknown or emerging threats where labeled data is unavailable, but their performance is inconsistent without careful threshold calibration. Overall, unsupervised methods are moderately effective but insufficient as a standalone intrusion detection strategy.
+Unsupervised anomaly detection methods can identify attacks that significantly deviate from normal behavior, especially high-variance or clearly abnormal patterns. However, they struggle with low-signal attacks that resemble legitimate traffic, leading to missed detections. <br/> Their strength lies in detecting unknown or emerging threats where labeled data is unavailable, but their performance is inconsistent without careful threshold calibration. <br/>Overall, unsupervised methods are moderately effective but insufficient as a standalone intrusion detection strategy.<br/> High recall with low PR-AUC translates into excessive alerts, overwhelming analysts despite successful attack detection.
 :::
 
 ##  Discussion {transition="fade-in slide-out" transition-speed="slow" .scrollable}
@@ -270,9 +271,11 @@ Unsupervised anomaly detection methods can identify attacks that significantly d
 - Statistical models detect only **simple outliers**
 - Supervised offer **clearer interpretability**
 - More reliable for **operational IDS**
+- **Model assumptions**
 
 ::: aside
-Supervised machine learning models significantly outperform statistical anomaly detection methods across all major evaluation metrics. They deliver higher accuracy, stronger precision and recall, and more consistent detection of diverse attack types. Statistical methods, such as Z-score, IQR, and Mahalanobis distance, catch only basic or extreme outliers and fail to capture complex attack behaviors. Supervised models also provide clearer interpretability through feature importance and decision boundary analysis, making them far easier for analysts to validate and operationalize. Overall, supervised learning offers far superior intrusion detection performance and reliability in real-world environments.
+Supervised machine learning models significantly outperform statistical anomaly detection methods across all major evaluation metrics. They deliver higher accuracy, stronger precision and recall, and more consistent detection of diverse attack types. <br/> Statistical methods, such as Z-score, IQR, and Mahalanobis distance, catch only basic or extreme outliers and fail to capture complex attack behaviors. <br/>Supervised models also provide clearer interpretability through feature importance and decision boundary analysis, making them far easier for analysts to validate and operationalize. Overall, supervised learning offers far superior intrusion detection performance and reliability in real-world environments. <br/>  While supervised models achieved the strongest performance in this study, their effectiveness assumes high-quality labels and careful separation between training and test data. In real-world intrusion detection systems, labeling delays, noisy ground truth, or temporal leakage can reduce model reliability. This highlights the importance of combining supervised models with anomaly-based methods in operational deployments.
+
 :::
 
 ## Discussion {transition="fade-in slide-out" transition-speed="slow" .scrollable}
@@ -309,4 +312,22 @@ Each modeling approach comes with strengths and trade-offs. Supervised models de
 
 ::: aside
 These findings translate into several practical considerations for real-world intrusion detection. First, managing false positives is essential to prevent analyst fatigue and ensure SOC efficiency. Alert thresholds should be reviewed and adjusted regularly, especially for unsupervised models that are sensitive to behavioral shifts. Models must be retrained periodically to stay aligned with evolving network patterns and avoid degradation from concept drift. A hybrid strategy—combining supervised and unsupervised techniques—can offer both strong accuracy and adaptability. Altogether, these practices enhance SOC decision-making and support more resilient and proactive cybersecurity operations.
+:::
+
+## Hybrid IDS Strategy (Proposed) {transition="fade-in slide-out" transition-speed="slow" .scrollable}
+- **Stage 1: Unsupervised anomaly detection**
+  - Autoencoder / Isolation Forest flag novel or low-frequency behavior
+- **Stage 2: Supervised classification**
+  - Random Forest assigns high-confidence attack labels
+- **Stage 3: Explainability-driven validation**
+  - SHAP supports analyst trust and feature-level inspection
+- **Operational benefit**
+  - Balances early detection, precision, and interpretability
+
+::: aside
+This is a practical hybrid intrusion detection strategy that synthesizes the strengths observed across models. <br/>
+In the first stage, unsupervised detectors such as autoencoders or isolation forests act as lightweight anomaly tripwires. They are well suited for identifying previously unseen or low-frequency attacks without requiring labels. <br/>
+In the second stage, supervised models—particularly Random Forest—are applied to traffic flagged as suspicious. This stage provides higher precision and stable classification for known attack patterns, reducing false positives. <br/>
+In the final stage, SHAP explainability is used to support analyst validation by highlighting which features drove each detection decision. This helps distinguish true attacks from noise and increases operational trust. <br/>
+Overall, this hybrid approach reflects real-world IDS constraints by combining adaptability, accuracy, and interpretability rather than relying on a single detection paradigm.
 :::
